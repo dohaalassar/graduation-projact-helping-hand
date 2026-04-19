@@ -19,10 +19,19 @@
   top: 0;
   left: 48px;
   z-index: 10;
+  width: 110px;
+  height: 155px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 12px 26px;
+clip-path: polygon(0 0, 100% 0, 100% 72%, 50% 100%, 0 72%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .psychologist-signup-page .logo-image {
-  width: 118px;
+    width: 150px;
   height: auto;
   display: block;
   object-fit: contain;
@@ -31,7 +40,7 @@
 .psychologist-signup-page .auth-card {
   width: 100%;
   max-width: 620px;
-  background: #f4f4f4;
+  background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
   padding: 42px 56px 30px;
@@ -229,20 +238,15 @@
   text-align: center;
 }
 
-/* @media (max-width: 1100px) {
-  .psychologist-signup-page .auth-card {
-    max-width: 92%;
-    padding: 38px 32px 26px;
-  }
-} */
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .psychologist-signup-page .logo-banner {
-    top: 10px;
+    top: 0px;
     left: 20px;
   }
 
   .psychologist-signup-page .logo-image {
-    width: 75px;
+    width: 150px;
   }
 
   .psychologist-signup-page .auth-page-content {
@@ -287,14 +291,19 @@
     font-size: 10px;
   }
 }
-@media (max-width: 768px) {
-  .psychologist-signup-page .logo-banner {
+@media (max-width: 944px) {
+ .psychologist-signup-page .logo-banner {
+    top: 0px;
     left: 16px;
-    top: 8px;
+    width: 60px;
+    height: 70px;
+    padding: 8px 7px 14px;
+    clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);
   }
 
+
   .psychologist-signup-page .logo-image {
-    width: 65px;
+    width: 80px;
   }
 
   .psychologist-signup-page .auth-page-content {
@@ -302,7 +311,7 @@
   }
 
   .psychologist-signup-page .auth-card {
-    max-width: 100%;
+    max-width: 80%;
     padding: 34px 18px 22px;
   }
 
@@ -351,7 +360,7 @@
 
 @media (max-width: 480px) {
   .psychologist-signup-page .logo-image {
-    width: 60px;
+    width: 80px;
   }
 
   .psychologist-signup-page .auth-page-content {
@@ -359,6 +368,7 @@
   }
 
   .psychologist-signup-page .auth-card {
+    max-width: 100%;
     padding: 28px 14px 18px;
   }
 

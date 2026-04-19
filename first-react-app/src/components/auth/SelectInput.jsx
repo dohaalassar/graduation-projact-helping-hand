@@ -1,49 +1,4 @@
-// const SelectInput = ({
-//   label,
-//   options,
-//   placeholder,
-//   error,
-//   id,
-//   ...props
-// }) => {
-//   const selectId = id || label || placeholder;
 
-//   return (
-//     <div className="input-group">
-//       {label && (
-//         <label htmlFor={selectId} className="auth-label">
-//           {label}
-//         </label>
-//       )}
-
-//       <div className="select-wrapper">
-//         <select
-//           id={selectId}
-//           className="auth-select"
-//           dir="rtl"
-//           defaultValue=""
-//           {...props}
-//         >
-//           {placeholder && (
-//             <option value="" disabled>
-//               {placeholder}
-//             </option>
-//           )}
-
-//           {options.map((opt) => (
-//             <option key={opt.value} value={opt.value}>
-//               {opt.label}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-
-//       {error && <p className="auth-error">{error}</p>}
-//     </div>
-//   );
-// };
-
-// export default SelectInput;
 import { ChevronDown } from "lucide-react";
 
 const SelectInput = ({
