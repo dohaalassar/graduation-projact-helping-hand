@@ -54,6 +54,7 @@ import React, { useState } from "react";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import LogoBanner from "../auth/LogoBanner";
+import "../../styles/header.css";
 
 const navLinks = [
   { label: "الرئيسية", path: "/parent/dashboard" },

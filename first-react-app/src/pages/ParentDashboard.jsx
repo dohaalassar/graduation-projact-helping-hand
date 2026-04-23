@@ -111,7 +111,8 @@ import Footer from "../components/layout/Footer.jsx";
 import ParentProfileSection from "../components/parent-dashboard/ParentProfileSection.jsx";
 import ChildrenSummarySection from "../components/parent-dashboard/ChildrenSummarySection.jsx";
 import SDQSection from "../components/parent-dashboard/SDQSection.jsx";
-import "../styles/ParentDashboard.css";
+import Header from "../components/layout/Header.jsx";
+import "../styles/parentdashboard.css";
 
 // Demo data — replace with real backend data.
 // Toggle scenarios by editing the `parent` object below.
@@ -156,6 +157,7 @@ export default function ParentDashboard() {
 
   return (
     <div className="pd-page" dir="rtl">
+          <Header /> 
 
       <main className="pd-main">
         <ParentProfileSection parent={parent} />
