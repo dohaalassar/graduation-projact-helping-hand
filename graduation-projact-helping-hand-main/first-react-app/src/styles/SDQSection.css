@@ -1,0 +1,61 @@
+.pd-sdq-card {
+  margin-bottom: 30px;
+}
+
+.pd-sdq-info-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-dark);
+  text-align: justify;
+  margin-bottom: 20px;
+}
+
+.pd-sdq-instruction {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pd-sdq-action-row {
+  display: flex;
+  justify-content: center;
+}
+
+.pd-sdq-btn {
+  width: 100%;
+  max-width: 400px;
+}
+
+.pd-sdq-completed-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background-color: #f8fff9;
+  border-radius: 12px;
+  padding: 15px;
+  color: var(--text-dark);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pd-success-icon {
+  color: var(--success-green);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .pd-sdq-info-text {
+    font-size: 14px;
+  }
+  .pd-sdq-instruction {
+    font-size: 14px;
+  }
+  .pd-sdq-completed-msg {
+    font-size: 13px;
+    flex-direction: column;
+    text-align: center;
+  }
+}

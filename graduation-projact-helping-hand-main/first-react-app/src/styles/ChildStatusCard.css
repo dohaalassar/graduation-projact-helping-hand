@@ -1,0 +1,90 @@
+.pd-child-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.pd-child-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pd-child-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-child-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.pd-child-name-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.pd-child-status-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.pd-status-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.is-evaluated .pd-status-dot {
+  background-color: var(--success-green);
+}
+
+.is-not-evaluated .pd-status-dot {
+  background-color: #aeb4b9;
+}
+
+.pd-child-note-box {
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.pd-note-label {
+  color: #f1c40f; /* Yellowish as in screenshot */
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+.pd-note-content {
+  color: #555;
+}
+
+.pd-child-divider {
+  height: 1px;
+  background-color: #eee;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.pd-child-item:last-child .pd-child-divider {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .pd-child-num, .pd-child-name-text {
+    font-size: 16px;
+  }
+  .pd-child-status-box {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,44 @@
+.pd-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pd-main-container {
+  flex: 1;
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pd-sections-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pd-tour-btn {
+  background-color: var(--success-green);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 16px;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  transition: opacity 0.2s;
+}
+
+.pd-tour-btn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .pd-main-container {
+    padding: 20px 15px;
+  }
+}

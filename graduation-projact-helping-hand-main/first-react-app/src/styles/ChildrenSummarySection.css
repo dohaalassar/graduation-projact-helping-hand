@@ -1,0 +1,66 @@
+.pd-summary-card {
+  margin-bottom: 30px;
+}
+
+.pd-card-header-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.pd-card-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.pd-card-header-icon {
+  color: var(--text-dark);
+}
+
+.pd-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.pd-empty-msg {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.pd-add-btn {
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+.pd-children-items-list {
+  margin-bottom: 30px;
+}
+
+.pd-summary-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.pd-action-btn {
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .pd-card-title {
+    font-size: 18px;
+  }
+  .pd-empty-msg {
+    font-size: 16px;
+  }
+}

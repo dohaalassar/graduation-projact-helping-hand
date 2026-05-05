@@ -1,0 +1,77 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.role-modal-box {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.role-modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: black;
+  margin-bottom: 30px;
+  margin-top: 0;
+}
+
+.role-modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-direction: row-reverse; /* Ensure parent is on the right in RTL context visually if needed, but let's just use normal flex and DOM order */
+}
+
+/* Let's keep DOM order: Parent, then Psychologist */
+.role-btn-parent {
+  flex: 1;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+  background-color: #e0e0e0;
+  border: 2px solid #0b95ff; /* Blue border */
+  border-radius: 25px; /* Pill shape */
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.role-btn-parent:hover {
+  background-color: #d0d0d0;
+}
+
+.role-btn-psychologist {
+  flex: 1;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+  background-color: #d6d6d6;
+  border: 2px solid transparent;
+  border-radius: 25px; /* Pill shape */
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.role-btn-psychologist:hover {
+  background-color: #c0c0c0;
+}
+
+@media (max-width: 480px) {
+  .role-modal-buttons {
+    flex-direction: column;
+  }
+}

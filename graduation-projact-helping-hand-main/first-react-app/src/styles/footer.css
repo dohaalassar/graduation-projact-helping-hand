@@ -1,0 +1,158 @@
+.site-footer {
+  background-color: #315d7c; /* Match exact color from screenshot */
+  color: white;
+  padding: 60px 20px 20px;
+  width: 100%;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  text-align: right;
+  flex-direction: row-reverse; /* To arrange from right to left natively if not in RTL context, but assuming RTL is set on HTML, we can keep it as row */
+}
+
+/* Ensure right-to-left layout for flex items */
+html[dir="rtl"] .footer-container {
+  flex-direction: row;
+}
+
+.footer-section {
+  flex: 1;
+}
+
+.footer-section h4 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  color: white;
+}
+
+.footer-contact-list, .footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-contact-list li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Icon on the right, text on the left */
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: sans-serif; /* Better for numbers/email */
+}
+
+.footer-contact-list li span {
+  direction: ltr; /* Ensure numbers and emails display correctly */
+}
+
+.footer-links-list li a {
+  color: #e0e0e0;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 600;
+}
+
+.footer-links-list li a:hover {
+  color: white;
+}
+
+.footer-about-text {
+  flex: 1.5; /* Give slightly more width to the paragraph */
+}
+
+.footer-about-text p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #e0e0e0;
+  margin: 0;
+}
+
+.footer-logo-section {
+  display: flex;
+  justify-content: flex-start; /* Align logo to the far right of its container (start in RTL) */
+}
+
+.footer-logo-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 140px;
+}
+
+.footer-logo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.footer-bottom {
+  margin-top: 60px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 25px;
+  text-align: center;
+}
+
+.footer-bottom p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #e0e0e0;
+}
+
+.footer-disclaimer {
+  font-size: 12px !important;
+  opacity: 0.8;
+}
+
+/* Responsive Tablet and Mobile */
+@media (max-width: 992px) {
+  .footer-container {
+    flex-wrap: wrap;
+  }
+  .footer-section {
+    flex: 1 1 45%; /* 2 columns */
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+  }
+  
+  .footer-section {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .footer-logo-section {
+    justify-content: center;
+    order: -1; /* Move logo to the top on mobile */
+  }
+
+  .footer-contact-list li {
+    justify-content: center;
+    flex-direction: row-reverse; /* Keep icon logic consistent visually */
+  }
+
+  .footer-contact-list li span {
+    direction: ltr;
+  }
+}
