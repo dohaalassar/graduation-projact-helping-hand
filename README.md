@@ -1,1 +1,0 @@
-# graduation-projact-helping-hand
