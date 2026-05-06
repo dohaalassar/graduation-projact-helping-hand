@@ -1,0 +1,55 @@
+.pd-child-card {
+  padding: 12px 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pd-child-card:last-child {
+  border-bottom: none;
+}
+.pd-child-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pd-child-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ef4444;
+  font-size: 15px;
+  font-weight: 700;
+}
+.pd-child-index {
+  color: #ef4444;
+}
+.pd-child-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #4b5563;
+}
+.pd-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9ca3af;
+  display: inline-block;
+}
+.is-evaluated .pd-status-dot {
+  background: #16a34a;
+}
+.pd-child-note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.7;
+  background: #f9fafb;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.pd-note-label {
+  color: #ef4444;
+  font-weight: 700;
+}
