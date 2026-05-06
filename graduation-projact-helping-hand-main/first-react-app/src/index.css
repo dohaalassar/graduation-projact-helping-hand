@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap");
+
+:root {
+  --primary-blue: #1098f7;    /* Bright Blue for Header/Buttons */
+  --dark-blue: #2c4a6b;       /* Dark Navy for Footer/Steps */
+  --success-green: #00a651;   /* Success Green */
+  --bg-light-blue: #eef7fe;   /* Light background blue */
+  --text-dark: #333333;
+  --text-muted: #757575;
+  --white: #ffffff;
+  --border-radius: 20px;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Cairo", sans-serif;
+  background-color: var(--bg-light-blue);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* Common Card Style */
+.common-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 30px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Common Button Styles */
+.btn-primary {
+  background-color: var(--dark-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 16px;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-success {
+  background-color: var(--success-green);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 16px;
+  transition: opacity 0.2s;
+}
+
+.btn-success:hover {
+  opacity: 0.9;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-dark);
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+}

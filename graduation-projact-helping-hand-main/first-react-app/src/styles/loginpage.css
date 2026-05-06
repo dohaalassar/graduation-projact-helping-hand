@@ -1,0 +1,107 @@
+.auth-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-blue);
+}
+
+.auth-main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+/* The White Card Styling */
+.auth-card {
+  background-color: white;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 50px 40px;
+  position: relative;
+}
+
+.auth-card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #888 !important;
+  font-size: 14px !important;
+}
+
+.section-title {
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* Form Layout */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.auth-forgot-password {
+  text-align: right;
+  margin-top: -15px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.auth-server-error {
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Buttons Group in Card */
+.buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .auth-main-content {
+    padding: 30px 15px;
+  }
+  .auth-card {
+    padding: 40px 25px;
+    max-width: 100%;
+  }
+  .auth-card-title {
+    font-size: 17px;
+  }
+}

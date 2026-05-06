@@ -1,0 +1,161 @@
+.add-child-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-child-container {
+  flex: 1;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-child-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.add-child-card {
+  max-width: 700px !important;
+}
+
+.add-child-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-right: 5px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input,
+.input-with-icon select {
+  width: 100%;
+  height: 50px;
+  padding: 0 50px 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: var(--white);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  transition: border-color 0.2s;
+  appearance: none;
+}
+
+.input-with-icon input:focus,
+.input-with-icon select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.field-icon {
+  position: absolute;
+  right: 15px;
+  color: var(--text-dark);
+}
+
+.placeholder-style {
+  color: #aaa;
+}
+
+/* Image Upload Styling */
+.image-upload-section {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.image-upload-box {
+  width: 300px;
+  height: 200px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.2s;
+}
+
+.image-upload-box:hover {
+  background-color: #f9f9f9;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.upload-icon-circle {
+  width: 80px;
+  height: 80px;
+  background-color: #eee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.full-width {
+  width: 100%;
+  max-width: 500px;
+}
+
+@media (max-width: 768px) {
+  .add-child-title {
+    font-size: 20px;
+  }
+  
+  .image-upload-box {
+    width: 100%;
+    max-width: 300px;
+  }
+}
