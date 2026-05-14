@@ -121,7 +121,7 @@ const ChildrenDetailsPage = () => {
     if (child.plays === 1 && child.returnDate) {
       setModalData(child.returnDate);
     } else {
-      console.log(`Starting play for ${child.name}`);
+      navigate(`/game/intro/${child.id}`);
     }
   };
 
