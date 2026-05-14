@@ -7,6 +7,8 @@ import AddChildPage from "./pages/AddChildPage";
 import ChildrenDetailsPage from "./pages/ChildrenDetailsPage";
 import SDQAssessmentPage from "./pages/SDQAssessmentPage";
 import LandingPage from "./pages/LandingPage";
+import GameIntroPage from "./pages/GameIntroPage";
+import GamePlayPage from "./pages/GamePlayPage";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/parent/add-child" element={<AddChildPage />} />
         <Route path="/parent/children" element={<ChildrenDetailsPage />} />
         <Route path="/parent/sdq" element={<SDQAssessmentPage />} />
+        <Route path="/game/intro/:childId" element={<GameIntroPage />} />
+        <Route path="/game/play/:childId" element={<GamePlayPage />} />
       </Routes>
     </BrowserRouter>
   );
