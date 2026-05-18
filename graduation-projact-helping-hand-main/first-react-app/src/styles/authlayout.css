@@ -79,12 +79,11 @@
 
 .btn-link {
   background-color: transparent;
-  border: 1px solid #777;
+  border: #fff;
   padding: 6px 12px;
   font-size: 11px;
   color: #333;
   cursor: pointer;
-  border-radius: 4px;
   transition: 0.2s;
   font-weight: 600;
 }
