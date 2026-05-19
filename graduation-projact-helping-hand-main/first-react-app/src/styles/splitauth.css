@@ -1,0 +1,354 @@
+/* splitauth.css */
+.split-auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0b95ff;
+}
+
+.split-auth-main {
+  flex: 1;
+  display: flex;
+}
+
+.split-auth-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+/* Form Side */
+.split-auth-form-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #0b95ff;
+  position: relative;
+  z-index: 2;
+}
+
+.split-auth-form-card {
+  background-color: #f4f7fa;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.split-auth-form-wrapper {
+  width: 100%;
+}
+
+.login-form-container {
+  width: 100%;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.card-back-btn {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1D598A;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Auth components styling */
+.section-title {
+  color: #1D598A;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 10px 0 5px;
+  text-align: right;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.forgot-password .btn-link {
+  background: none;
+  border: none;
+  color: #1D598A;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.forgot-password .btn-link:hover {
+  text-decoration: underline;
+  color: #00A63E;
+}
+
+.server-error-container {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #fca5a5;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.auth-divider:not(:empty)::before {
+  margin-left: 15px;
+}
+
+.auth-divider:not(:empty)::after {
+  margin-right: 15px;
+}
+
+.split-auth-footer-wrap {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.split-auth-footer-wrap .text-auth-footer {
+  color: #ffffff;
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Image Side */
+.split-auth-image-side {
+  flex: 1.2;
+  display: none;
+  position: relative;
+  overflow: hidden;
+  background-color: #1D598A;
+}
+
+.split-auth-image-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.split-auth-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.split-auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(29, 89, 138, 0.75); /* Solid blue overlay with opacity */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.split-auth-overlay-content {
+  color: #ffffff;
+  text-align: center;
+  max-width: 500px;
+}
+
+.split-auth-title {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #FFDF20;
+  line-height: 1.3;
+}
+
+.split-auth-subtitle {
+  font-size: 18px;
+  line-height: 1.8;
+  opacity: 0.95;
+}
+
+@media (min-width: 992px) {
+  .split-auth-image-side {
+    display: block;
+  }
+}
+
+
+/* --- Input & Form Styling (Migrated & Modernized) --- */
+
+.auth-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151; /* Dark grey */
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.input-wrapper,
+.password-wrapper,
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.auth-input,
+.auth-select,
+.text-input,
+.password-input-field {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px; /* Modern soft edges */
+  border: 1.5px solid #d1d5db;
+  background-color: #f9fafb;
+  outline: none;
+  font-size: 14px;
+  color: #111827;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Padding for inputs with icons */
+.has-left-icon,
+.password-input-field {
+  padding-left: 44px !important;
+}
+
+.auth-input::placeholder,
+.text-input::placeholder,
+.password-input-field::placeholder {
+  color: #9ca3af;
+}
+
+.auth-input:hover,
+.auth-select:hover,
+.text-input:hover,
+.password-input-field:hover {
+  border-color: #9ca3af;
+  background-color: #ffffff;
+}
+
+.auth-input:focus,
+.auth-select:focus,
+.text-input:focus,
+.password-input-field:focus {
+  border-color: #1D598A;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(29, 89, 138, 0.1);
+}
+
+.input-icon-left,
+.password-lock-icon,
+.select-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Select specifics */
+.auth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 14px center;
+  background-size: 18px;
+  padding-left: 40px;
+}
+
+.auth-error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.password-hint {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 6px;
+  line-height: 1.6;
+  text-align: right;
+}
+
+.form-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.form-row-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.form-row-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.input-group {
+  width: 100%;
+}
+

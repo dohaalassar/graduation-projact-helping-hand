@@ -32,12 +32,16 @@ const GameIntroPage = () => {
             <span className="star">★</span>
             <span className="star">★</span>
             <span className="star">★</span>
+            <span className="star">★</span>
+            <span className="star">★</span>
+            <span className="star">★</span>
+            <span className="star">★</span>
           </div>
 
           {/* Intro Content */}
           <div className="game-intro-content">
             <h1 className="game-intro-title">هيا نبدأ اللعبة الأولى</h1>
-            
+
             <div className="game-title-pill">
               رحلة المشاعر
             </div>

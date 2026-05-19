@@ -1,5 +1,6 @@
 .site-footer {
-  background-color: #315d7c; /* Match exact color from screenshot */
+  background-color: #315d7c;
+  /* Match exact color from screenshot */
   color: white;
   padding: 60px 20px 20px;
   width: 100%;
@@ -14,7 +15,8 @@
   align-items: flex-start;
   gap: 30px;
   text-align: right;
-  flex-direction: row-reverse; /* To arrange from right to left natively if not in RTL context, but assuming RTL is set on HTML, we can keep it as row */
+  flex-direction: row-reverse;
+  /* To arrange from right to left */
 }
 
 /* Ensure right-to-left layout for flex items */
@@ -33,7 +35,8 @@ html[dir="rtl"] .footer-container {
   color: white;
 }
 
-.footer-contact-list, .footer-links-list {
+.footer-contact-list,
+.footer-links-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -45,15 +48,18 @@ html[dir="rtl"] .footer-container {
 .footer-contact-list li {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Icon on the right, text on the left */
+  justify-content: flex-end;
+  /* Icon on the right, text on the left */
   gap: 12px;
   font-size: 13px;
   font-weight: 500;
-  font-family: sans-serif; /* Better for numbers/email */
+  font-family: sans-serif;
+  /* Better for numbers/email */
 }
 
 .footer-contact-list li span {
-  direction: ltr; /* Ensure numbers and emails display correctly */
+  direction: ltr;
+  /* Ensure numbers and emails display correctly */
 }
 
 .footer-links-list li a {
@@ -69,7 +75,8 @@ html[dir="rtl"] .footer-container {
 }
 
 .footer-about-text {
-  flex: 1.5; /* Give slightly more width to the paragraph */
+  flex: 1.5;
+  /* Give slightly more width to the paragraph */
 }
 
 .footer-about-text p {
@@ -81,7 +88,8 @@ html[dir="rtl"] .footer-container {
 
 .footer-logo-section {
   display: flex;
-  justify-content: flex-start; /* Align logo to the far right of its container (start in RTL) */
+  justify-content: flex-start;
+  /* Align logo to the far right of its container (start in RTL) */
 }
 
 .footer-logo-card {
@@ -103,7 +111,7 @@ html[dir="rtl"] .footer-container {
 
 .footer-bottom {
   margin-top: 60px;
-  border-top: 1px solid rgba(255,255,255,0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding-top: 25px;
   text-align: center;
 }
@@ -124,8 +132,10 @@ html[dir="rtl"] .footer-container {
   .footer-container {
     flex-wrap: wrap;
   }
+
   .footer-section {
-    flex: 1 1 45%; /* 2 columns */
+    flex: 1 1 45%;
+    /* 2 columns */
   }
 }
 
@@ -136,7 +146,7 @@ html[dir="rtl"] .footer-container {
     text-align: center;
     gap: 40px;
   }
-  
+
   .footer-section {
     flex: 1 1 100%;
     width: 100%;
@@ -144,12 +154,14 @@ html[dir="rtl"] .footer-container {
 
   .footer-logo-section {
     justify-content: center;
-    order: -1; /* Move logo to the top on mobile */
+    order: -1;
+    /* Move logo to the top on mobile */
   }
 
   .footer-contact-list li {
     justify-content: center;
-    flex-direction: row-reverse; /* Keep icon logic consistent visually */
+    flex-direction: row-reverse;
+    /* Keep icon logic consistent visually */
   }
 
   .footer-contact-list li span {
