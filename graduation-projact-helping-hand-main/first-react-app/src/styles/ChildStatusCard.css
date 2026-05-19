@@ -60,7 +60,7 @@
 }
 
 .pd-note-label {
-  color: #f1c40f; /* Yellowish as in screenshot */
+  color: #f1c40f;
   font-weight: 700;
   margin-left: 5px;
 }
@@ -81,9 +81,12 @@
 }
 
 @media (max-width: 768px) {
-  .pd-child-num, .pd-child-name-text {
+
+  .pd-child-num,
+  .pd-child-name-text {
     font-size: 16px;
   }
+
   .pd-child-status-box {
     font-size: 13px;
   }

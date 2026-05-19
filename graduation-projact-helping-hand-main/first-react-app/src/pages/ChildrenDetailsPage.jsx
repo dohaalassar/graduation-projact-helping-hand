@@ -5,7 +5,7 @@ import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import "../styles/childrendetails.css";
 
-// Import images (ensure these exist in your src/assets folder)
+// Import images
 import ahmedImg from "../assets/ahmed.jpeg";
 import aliImg from "../assets/ali.jpeg";
 import noraImg from "../assets/nora.jpeg";
@@ -154,12 +154,12 @@ const ChildrenDetailsPage = () => {
             <div className="empty-state-icon">👶</div>
             <h3>لا يوجد أبناء مسجلين بعد</h3>
             <p>قم بإضافة بيانات أبنائك لتبدأ في متابعة حالتهم النفسية وتقييماتهم.</p>
-            <button 
-               className="btn-primary add-child-footer-btn"
-               onClick={() => navigate("/parent/add-child")}
-             >
-               أضف ابن جديد <UserPlus size={18} style={{ marginRight: '8px' }} />
-             </button>
+            <button
+              className="btn-primary add-child-footer-btn"
+              onClick={() => navigate("/parent/add-child")}
+            >
+              أضف ابن جديد <UserPlus size={18} style={{ marginRight: '8px' }} />
+            </button>
           </div>
         )}
 
@@ -178,11 +178,11 @@ const ChildrenDetailsPage = () => {
                       <p>الحالة: <span style={{ color: child.statusColor }}>{child.status}</span></p>
                     </div>
                     <div className="child-avatar-circle">
-                       {child.image ? (
-                         <img src={child.image} alt={child.name} className="avatar-img-real" />
-                       ) : (
-                         <div className="avatar-img-placeholder" />
-                       )}
+                      {child.image ? (
+                        <img src={child.image} alt={child.name} className="avatar-img-real" />
+                      ) : (
+                        <div className="avatar-img-placeholder" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ const ChildrenDetailsPage = () => {
 
                 {/* Action Button */}
                 <div className="child-action-wrap">
-                  <button 
+                  <button
                     className="btn-success full-width-btn"
                     onClick={() => handleStartPlay(child)}
                   >
@@ -240,12 +240,12 @@ const ChildrenDetailsPage = () => {
 
             {/* Global Page Action */}
             <div className="page-footer-actions">
-               <button 
-                 className="btn-primary add-child-footer-btn"
-                 onClick={() => navigate("/parent/add-child")}
-               >
-                 أضف ابن جديد <UserPlus size={18} style={{ marginRight: '8px' }} />
-               </button>
+              <button
+                className="btn-primary add-child-footer-btn"
+                onClick={() => navigate("/parent/add-child")}
+              >
+                أضف ابن جديد <UserPlus size={18} style={{ marginRight: '8px' }} />
+              </button>
             </div>
           </>
         )}
