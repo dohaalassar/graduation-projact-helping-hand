@@ -24,162 +24,407 @@ const questions = [
   "عصبي أو متشبث بالآخرين في المواقف الجديدة، يفقد ثقته بنفسه بسهولة",
   "لطيف مع من هم أصغر منه",
   "كثيراً ما يكذب أو يخدع أو يغش",
-  "يُستهزأ منه أو يُستأسد عليه من من هم في سنه",
-  "كثيراً ما يتطوع لمساعدة الآخرين (الوالدين، المدرسين، الأطفال)",
+  "يُستهزأ منه أو يُستأسد عليه",
+  "كثيراً ما يتطوع لمساعدة الآخرين",
   "يفكر قبل أن يتصرف",
-  "يسرق من البيت أو المدرسة أو من أماكن أخرى",
-  "ينسجم بشكل أفضل مع الكبار أكثر من الأطفال في سنه",
-  "يخاف من أشياء كثيرة، من السهل تخويفه",
-  "يتابع أداء الواجبات حتى النهاية، لديه انتباه جيد"
+  "يسرق من البيت أو المدرسة",
+  "ينسجم مع الكبار أكثر",
+  "يخاف من أشياء كثيرة",
+  "يتابع أداء الواجبات حتى النهاية"
 ];
 
 const SDQAssessmentPage = () => {
+
   const navigate = useNavigate();
   const location = useLocation();
-  const childName = location.state?.childName || "نورا"; // Default if no state
-  const gender = location.state?.gender || "female"; // Default if no state
-  const childTerm = gender === "male" ? "طفلك" : "طفلتك";
 
-  const [step, setStep] = useState(0); // 0: Welcome, 1: Intro, 2: Qs Part 1, 3: Qs Part 2, 4: Qs Part 3
+  const childName =
+    location.state?.childName || "نورا";
+
+  const gender =
+    location.state?.gender || "female";
+
+  const childTerm =
+    gender === "male"
+      ? "طفلك"
+      : "طفلتك";
+
+  const [step, setStep] = useState(0);
+
   const [answers, setAnswers] = useState({});
 
+  const [validationError, setValidationError] = useState("");
+
+  const [highlightedUnanswered,
+    setHighlightedUnanswered] = useState([]);
+
   const handleAnswerChange = (qIndex, value) => {
-    setAnswers({ ...answers, [qIndex]: value });
+
+    setAnswers((prev) => ({
+      ...prev,
+      [qIndex]: value
+    }));
+
+    setHighlightedUnanswered((prev) =>
+      prev.filter((item) => item !== qIndex)
+    );
+
+    setValidationError("");
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
-  const handleClose = () => navigate("/parent/dashboard");
+  const nextStep = () => {
+    setStep((prev) => prev + 1);
+  };
 
-  const renderWelcome = () => (
-    <div className="sdq-step-card welcome-step">
-      <div className="sdq-card-header">
-         <ChevronRight className="header-back-arrow" onClick={handleClose} />
-      </div>
-      <h2>ما هو نموذج تقييم نقاط القوة والصعوبات (SDQ) ؟</h2>
-      <div className="sdq-info-content">
-        <p>هو استبيان موجز وسريع يتكون من 25 بند يستخدم لفحص الحالة العاطفية والسلوكية للأطفال من خلال السؤال عن 5 مقاييس وهي: الأعراض العاطفية، مشاكل السلوك، فرط النشاط/قلة الانتباه، مشاكل العلاقات مع الأقران، والسلوك الاجتماعي الإيجابي. كل مقياس من الخمسة يتكون من 5 بنود تقوم أنت كولي أمر بالإجابة عنها.</p>
-        <p className="highlight-text">الأسئلة عن الطفل لكن أنت من يجيب عنها.</p>
-      </div>
-      <div className="sdq-actions-vertical">
-        <button className="btn-primary" onClick={nextStep}>ابدأ</button>
-        <button className="btn-outline" onClick={handleClose}>اغلاق</button>
-      </div>
-    </div>
-  );
+  const prevStep = () => {
+    setStep((prev) => prev - 1);
+  };
 
-  const renderIntro = () => (
-    <div className="sdq-step-card intro-step">
-      <div className="sdq-card-header">
-         <ChevronRight className="header-back-arrow" onClick={prevStep} />
-      </div>
-      <h2>مرحبا بك في نموذج تقييم نقاط القوة والصعوبات (SDQ)</h2>
-      <p className="child-target-text">الخاص بـ {childTerm} {childName}</p>
-      <div className="sdq-actions-vertical">
-        <button className="btn-primary" onClick={nextStep}>التالي</button>
-        <button className="btn-outline" onClick={handleClose}>اغلاق</button>
-      </div>
-    </div>
-  );
+  const handleClose = () => {
+    navigate("/parent/dashboard");
+  };
+
+  const handleNextQuestionsStep = (
+    startIndex,
+    endIndex
+  ) => {
+
+    const unanswered = [];
+
+    for (
+      let i = startIndex;
+      i < endIndex;
+      i++
+    ) {
+
+      if (
+        answers[i] === undefined ||
+        answers[i] === ""
+      ) {
+
+        unanswered.push(i);
+
+      }
+
+    }
+
+    if (unanswered.length > 0) {
+
+      setHighlightedUnanswered(
+        unanswered
+      );
+
+      setValidationError(
+        "يرجى الإجابة على جميع الأسئلة قبل المتابعة"
+      );
+
+      setTimeout(() => {
+
+        const firstQuestion =
+          document.querySelector(
+            ".question-item-card.unanswered-highlight"
+          );
+
+        if (firstQuestion) {
+
+          firstQuestion.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+
+        }
+
+      }, 100);
+
+      return;
+
+    }
+
+    setValidationError("");
+    setHighlightedUnanswered([]);
+
+    nextStep();
+
+  };
 
   const renderQuestions = (startIndex, endIndex) => (
+
     <div className="sdq-questions-container">
+
       <div className="questions-page-header">
-         <ChevronRight className="header-back-arrow" onClick={prevStep} />
-         <h2 className="questions-title">اختر الاجابة التي تناسب السؤال:</h2>
+
+        <ChevronRight
+          className="header-back-arrow"
+          onClick={prevStep}
+        />
+
+        <h2 className="questions-title">
+          اختر الإجابة التي تناسب السؤال
+        </h2>
+
       </div>
-      
+
       <div className="questions-list">
-        {questions.slice(startIndex, endIndex).map((q, idx) => {
-          const qIndex = startIndex + idx;
-          return (
-            <div key={qIndex} className="question-item-card">
-              <p className="question-text">
-                <span className="q-number">{(qIndex + 1).toString().padStart(2, '0')}.</span> {q}
-              </p>
-              <div className="options-group">
-                <label className="option-label">
-                  <input 
-                    type="radio" 
-                    name={`q-${qIndex}`} 
-                    value="0" 
-                    checked={answers[qIndex] === "0"}
-                    onChange={() => handleAnswerChange(qIndex, "0")}
-                  />
-                  <span>غير صحيح</span>
-                </label>
-                <label className="option-label">
-                  <input 
-                    type="radio" 
-                    name={`q-${qIndex}`} 
-                    value="1" 
-                    checked={answers[qIndex] === "1"}
-                    onChange={() => handleAnswerChange(qIndex, "1")}
-                  />
-                  <span>صحيح نوعاً ما</span>
-                </label>
-                <label className="option-label">
-                  <input 
-                    type="radio" 
-                    name={`q-${qIndex}`} 
-                    value="2" 
-                    checked={answers[qIndex] === "2"}
-                    onChange={() => handleAnswerChange(qIndex, "2")}
-                  />
-                  <span>صحيح بالتأكيد</span>
-                </label>
+
+        {questions
+          .slice(startIndex, endIndex)
+          .map((q, idx) => {
+
+            const qIndex =
+              startIndex + idx;
+
+            const isHighlighted =
+              highlightedUnanswered.includes(
+                qIndex
+              );
+
+            return (
+
+              <div
+                key={qIndex}
+                className={`question-item-card ${isHighlighted
+                    ? "unanswered-highlight"
+                    : ""
+                  }`}
+              >
+
+                <p className="question-text">
+
+                  <span className="q-number">
+
+                    {(qIndex + 1)
+                      .toString()
+                      .padStart(2, "0")}.
+
+                  </span>
+
+                  {q}
+
+                </p>
+
+                <div className="options-group">
+
+                  <label className="option-label">
+
+                    <input
+                      type="radio"
+                      name={`q-${qIndex}`}
+                      checked={
+                        answers[qIndex] === "0"
+                      }
+                      onChange={() =>
+                        handleAnswerChange(
+                          qIndex,
+                          "0"
+                        )
+                      }
+                    />
+
+                    <span>
+                      غير صحيح
+                    </span>
+
+                  </label>
+
+                  <label className="option-label">
+
+                    <input
+                      type="radio"
+                      name={`q-${qIndex}`}
+                      checked={
+                        answers[qIndex] === "1"
+                      }
+                      onChange={() =>
+                        handleAnswerChange(
+                          qIndex,
+                          "1"
+                        )
+                      }
+                    />
+
+                    <span>
+                      صحيح نوعاً ما
+                    </span>
+
+                  </label>
+
+                  <label className="option-label">
+
+                    <input
+                      type="radio"
+                      name={`q-${qIndex}`}
+                      checked={
+                        answers[qIndex] === "2"
+                      }
+                      onChange={() =>
+                        handleAnswerChange(
+                          qIndex,
+                          "2"
+                        )
+                      }
+                    />
+
+                    <span>
+                      صحيح بالتأكيد
+                    </span>
+
+                  </label>
+
+                </div>
+
               </div>
-            </div>
-          );
-        })}
+
+            );
+
+          })}
+
       </div>
+
+      {validationError && (
+
+        <div
+          className="sdq-validation-error-wrapper"
+        >
+
+          <p className="sdq-validation-error">
+
+            {validationError}
+
+          </p>
+
+        </div>
+
+      )}
 
       <div className="questions-footer-actions">
-        <button 
-          className="btn-primary next-btn" 
-          onClick={endIndex >= 25 ? nextStep : nextStep}
-        >
-          {endIndex >= 25 ? "إنهاء" : "التالي"}
-        </button>
-      </div>
-    </div>
-  );
 
-  const renderSuccess = () => (
-    <div className="sdq-step-card success-step">
-      <div className="success-icon-wrapper">
-         <div className="success-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-         </div>
-      </div>
-      <h2>تهانينا ! لقد أنهيت نموذج تقييم {childTerm} {childName}</h2>
-      <p className="success-subtext">هل تفضل أن تبدأ {childName} باللعب، لاستكمال عملية التقييم؟</p>
-      
-      <div className="sdq-actions-vertical">
-        <button className="btn-success success-action-btn" onClick={() => console.log("Start Play")}>
-          ابدأ اللعب
+        <button
+          className="btn-primary next-btn"
+          onClick={() =>
+            handleNextQuestionsStep(
+              startIndex,
+              endIndex
+            )
+          }
+        >
+
+          {endIndex >= 25
+            ? "إنهاء"
+            : "التالي"}
+
         </button>
-        <button className="btn-white-outline success-action-btn" onClick={() => navigate("/parent/dashboard")}>
-          صفحتي الرئيسية
-        </button>
+
       </div>
+
     </div>
+
   );
 
   return (
+
     <div className="sdq-assessment-page">
+
       <Header />
+
       <main className="sdq-main-content">
-        {step === 0 && renderWelcome()}
-        {step === 1 && renderIntro()}
-        {step === 2 && renderQuestions(0, 8)}
-        {step === 3 && renderQuestions(8, 16)}
-        {step === 4 && renderQuestions(16, 25)}
-        {step === 5 && renderSuccess()}
+
+        {step === 0 && (
+
+          <div className="sdq-step-card">
+
+            <h2>
+              ما هو نموذج SDQ؟
+            </h2>
+
+            <button
+              className="btn-primary"
+              onClick={nextStep}
+            >
+
+              ابدأ
+
+            </button>
+
+          </div>
+
+        )}
+
+        {step === 1 && (
+
+          <div className="sdq-step-card">
+
+            <h2>
+              مرحباً بك
+            </h2>
+
+            <p>
+              الخاص بـ
+              {childTerm}
+              {" "}
+              {childName}
+            </p>
+
+            <button
+              className="btn-primary"
+              onClick={nextStep}
+            >
+
+              التالي
+
+            </button>
+
+          </div>
+
+        )}
+
+        {step === 2 &&
+          renderQuestions(0, 8)}
+
+        {step === 3 &&
+          renderQuestions(8, 16)}
+
+        {step === 4 &&
+          renderQuestions(16, 25)}
+
+        {step === 5 && (
+
+          <div className="sdq-step-card">
+
+            <h2>
+
+              تهانينا لقد أنهيت تقييم
+              {" "}
+              {childTerm}
+              {" "}
+              {childName}
+
+            </h2>
+
+            <button
+              className="btn-success"
+              onClick={() =>
+                navigate(
+                  "/parent/dashboard"
+                )
+              }
+            >
+
+              صفحتي الرئيسية
+
+            </button>
+
+          </div>
+
+        )}
+
       </main>
+
       <Footer />
+
     </div>
+
   );
+
 };
 
 export default SDQAssessmentPage;

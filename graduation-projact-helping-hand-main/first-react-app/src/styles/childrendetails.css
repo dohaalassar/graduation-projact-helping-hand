@@ -94,20 +94,106 @@
   margin: 4px 0;
 }
 
+.child-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .child-avatar-circle {
+  position: relative;
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background-color: #eee;
+  background-color: #17a8f5;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.child-avatar-circle:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transform: scale(1.02);
 }
 
 .avatar-img-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #ccc; /* Generic fallback */
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.child-avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.child-avatar-circle:hover .child-avatar-overlay {
+  opacity: 1;
+}
+
+.child-avatar-overlay-text {
+  font-size: 8px;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+.child-avatar-camera-badge {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #17a8f5;
+  color: white;
+  border: 1.5px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.child-avatar-delete-btn {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  z-index: 6;
+}
+
+.child-avatar-delete-btn:hover {
+  background-color: #ff7875;
+  transform: scale(1.1);
 }
 
 .avatar-img-real {

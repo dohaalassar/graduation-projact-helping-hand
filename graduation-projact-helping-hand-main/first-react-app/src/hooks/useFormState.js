@@ -42,18 +42,36 @@ export function useFormState(initialState) {
   const [serverError, setServerError] = useState(null);
 
   const handleChange = useCallback(
-    (field) => (e) => {
-      setValues((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
+    (fieldOrEvent) => {
+      // Check if it's a standard event
+      if (fieldOrEvent && fieldOrEvent.target) {
+        const event = fieldOrEvent;
+        const name = event.target.name;
+        const value = event.target.value;
+        setValues((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+        setServerError(null);
+        return;
+      }
 
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-
-      setServerError(null);
+      // If it's a field name, return a curried function
+      return (e) => {
+        setValues((prev) => ({
+          ...prev,
+          [fieldOrEvent]: e.target.value,
+        }));
+        setErrors((prev) => ({
+          ...prev,
+          [fieldOrEvent]: "",
+        }));
+        setServerError(null);
+      };
     },
     []
   );

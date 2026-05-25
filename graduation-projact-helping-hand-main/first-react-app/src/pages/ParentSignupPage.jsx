@@ -10,6 +10,7 @@ import SecondaryButton from "../components/auth/SecondaryButton";
 import FormRow from "../components/auth/FormRow";
 import { dayOptions, monthOptions, yearOptions, genderOptions } from "../utils/dateOptions";
 import { isValidEmailOrPhone, isValidPassword } from "../utils/validation";
+import { registerUser } from "../services/authService";
 import { IdCard, Phone } from "lucide-react";
 // import "../styles/parentsignup.css";
 
@@ -28,6 +29,8 @@ const ParentSignupPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const handleChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -62,10 +65,26 @@ const ParentSignupPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log("Parent Signup Data:", formData);
+    setLoading(true);
+    setServerError("");
+    try {
+      await registerUser({ ...formData, role: "parent" });
+      navigate("/login");
+    } catch (error) {
+      if (error.message === "EMAIL_ALREADY_EXISTS") {
+        setErrors((prev) => ({
+          ...prev,
+          emailOrPhone: "البريد الإلكتروني أو رقم الهاتف مسجل بالفعل",
+        }));
+      } else {
+        setServerError(error.message || "حدث خطأ أثناء التسجيل");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,11 +133,13 @@ const ParentSignupPage = () => {
               onChange={handleChange("password")}
               error={errors.password}
               placeholder="كلمة السر"
-              hint="أدخل تركيبة تتكون على الأقل من ستة أرقام وأحرف أبجدية وعلامات ترقيم (مثل ! و&)."
+              showStrengthMeter={true}
             />
 
+            {serverError && <p className="server-error" style={{ color: "var(--error-color, #ef4444)", textAlign: "center", marginTop: "1rem" }}>{serverError}</p>}
+
             <div className="buttons-group">
-              <PrimaryButton type="submit">إرسال</PrimaryButton>
+              <PrimaryButton type="submit" loading={loading}>إرسال</PrimaryButton>
               <SecondaryButton type="button" onClick={() => navigate("/login")}>
                 لدي حساب بالفعل
               </SecondaryButton>

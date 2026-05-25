@@ -40,7 +40,7 @@ const demoParent = {
 
 export default function ParentDashboard() {
   const navigate = useNavigate();
-  const [parent] = useState(demoParent);
+  const [parent, setParent] = useState(demoParent);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const children = parent.children || [];
@@ -58,12 +58,19 @@ export default function ParentDashboard() {
     }
   };
 
+  const handleAvatarChange = (newAvatarUrl) => {
+    setParent(prev => ({
+      ...prev,
+      avatar: newAvatarUrl
+    }));
+  };
+
   return (
     <div className="pd-page">
       <Header />
 
       <main className="pd-main-container">
-        <ParentProfileSection parent={parent} />
+        <ParentProfileSection parent={parent} onAvatarChange={handleAvatarChange} />
 
         <div className="pd-sections-wrapper">
           <ChildrenSummarySection children={children} />

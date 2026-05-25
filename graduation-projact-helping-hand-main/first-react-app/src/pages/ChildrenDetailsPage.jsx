@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserPlus, X, Loader2 } from "lucide-react";
+import { UserPlus, X, Loader2, Camera, Trash2 } from "lucide-react";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import "../styles/childrendetails.css";
@@ -86,6 +86,31 @@ const ChildrenDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalData, setModalData] = useState(null);
+
+  const [selectedChildId, setSelectedChildId] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleAvatarClick = (childId) => {
+    setSelectedChildId(childId);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file && selectedChildId) {
+      const previewUrl = URL.createObjectURL(file);
+      setChildren((prev) =>
+        prev.map((c) => (c.id === selectedChildId ? { ...c, image: previewUrl } : c))
+      );
+    }
+    e.target.value = "";
+  };
+
+  const handleDeleteAvatar = (childId) => {
+    setChildren((prev) =>
+      prev.map((c) => (c.id === childId ? { ...c, image: "" } : c))
+    );
+  };
 
   // 2. Data Fetching Hook
   useEffect(() => {
@@ -177,11 +202,37 @@ const ChildrenDetailsPage = () => {
                       <p>العمر: {child.age}</p>
                       <p>الحالة: <span style={{ color: child.statusColor }}>{child.status}</span></p>
                     </div>
-                    <div className="child-avatar-circle">
-                      {child.image ? (
-                        <img src={child.image} alt={child.name} className="avatar-img-real" />
-                      ) : (
-                        <div className="avatar-img-placeholder" />
+                    <div className="child-avatar-container">
+                      <div className="child-avatar-circle" onClick={() => handleAvatarClick(child.id)} title="تغيير الصورة">
+                        {child.image ? (
+                          <img src={child.image} alt={child.name} className="avatar-img-real" />
+                        ) : (
+                          <div className="avatar-img-placeholder">
+                            {child.name ? child.name.split(" ").map(s => s[0]).slice(0, 2).join("") : "?"}
+                          </div>
+                        )}
+                        <div className="child-avatar-overlay">
+                          <Camera size={18} />
+                          <span className="child-avatar-overlay-text">تغيير الصورة</span>
+                        </div>
+                      </div>
+
+                      <div className="child-avatar-camera-badge">
+                        <Camera size={10} />
+                      </div>
+
+                      {child.image && (
+                        <button
+                          type="button"
+                          className="child-avatar-delete-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteAvatar(child.id);
+                          }}
+                          title="حذف الصورة"
+                        >
+                          <Trash2 size={12} />
+                        </button>
                       )}
                     </div>
                   </div>
@@ -249,6 +300,14 @@ const ChildrenDetailsPage = () => {
             </div>
           </>
         )}
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="image/*"
+          style={{ display: "none" }}
+        />
       </main>
 
       {/* Return Date Modal */}

@@ -12,6 +12,7 @@ import FormRow from "../components/auth/FormRow";
 import { useFormState } from "../hooks/useFormState";
 import { isRequired, isValidEmailOrPhone, isValidPassword, isValidEmployeeId } from "../utils/validation";
 import { dayOptions, monthOptions, yearOptions, genderOptions } from "../utils/dateOptions";
+import { registerUser } from "../services/authService";
 // import "../styles/psychologistsignup.css";
 
 const initialValues = {
@@ -62,9 +63,17 @@ const PsychologistSignupPage = () => {
     setLoading(true);
     setServerError(null);
     try {
-      console.log("Psychologist Signup Data:", values);
+      await registerUser({ ...values, role: "psychologist" });
+      navigate("/login");
     } catch (error) {
-      setServerError("حدث خطأ في الاتصال، حاول مرة أخرى");
+      if (error.message === "EMAIL_ALREADY_EXISTS") {
+        setErrors((prev) => ({
+          ...prev,
+          emailOrPhone: "البريد الإلكتروني أو رقم الهاتف مسجل بالفعل",
+        }));
+      } else {
+        setServerError(error.message || "حدث خطأ في الاتصال، حاول مرة أخرى");
+      }
     } finally {
       setLoading(false);
     }
@@ -120,7 +129,7 @@ const PsychologistSignupPage = () => {
               onChange={handleChange("password")}
               error={errors.password}
               placeholder="كلمة السر"
-              hint="أدخل تركيبة تتكون على الأقل من ستة أرقام وأحرف أبجدية وعلامات ترقيم (مثل ! و&)."
+              showStrengthMeter={true}
             />
 
             {serverError && <div className="server-error-box">{serverError}</div>}

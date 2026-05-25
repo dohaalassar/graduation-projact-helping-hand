@@ -268,6 +268,154 @@
   text-align: center;
 }
 
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.password-toggle-btn:hover {
+  color: #111;
+}
+
+.has-password-icons {
+  padding-left: 36px !important;
+  padding-right: 36px !important;
+}
+
+.password-lock-icon {
+  left: 12px;
+  right: auto;
+  pointer-events: none;
+}
+
+/* Strength Meter styles */
+.strength-meter-container {
+  margin-top: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.strength-bar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.strength-label {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+.strength-text-value {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.strength-very-weak {
+  color: #d93025;
+}
+
+.strength-weak {
+  color: #ff9900;
+}
+
+.strength-medium {
+  color: #f3b300;
+}
+
+.strength-strong {
+  color: #0f9d58;
+}
+
+.strength-bar-bg {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  width: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-bar-fill.strength-very-weak {
+  background-color: #d93025;
+}
+
+.strength-bar-fill.strength-weak {
+  background-color: #ff9900;
+}
+
+.strength-bar-fill.strength-medium {
+  background-color: #f3b300;
+}
+
+.strength-bar-fill.strength-strong {
+  background-color: #0f9d58;
+}
+
+.strength-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.strength-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: #666;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.strength-checklist li.met {
+  color: #0f9d58;
+}
+
+.strength-checklist li.unmet {
+  color: #777;
+}
+
+.strength-checklist .check-icon {
+  color: #0f9d58;
+  flex-shrink: 0;
+}
+
+.strength-checklist .bullet-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: inline-block;
+  margin-right: 3px;
+  margin-left: 3px;
+  flex-shrink: 0;
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .logo-banner {
     top: 0px;

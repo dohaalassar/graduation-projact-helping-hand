@@ -36,16 +36,51 @@ export function isValidEmailOrPhone(value) {
   return "";
 }
 
+export function checkPasswordStrength(value) {
+  if (!value) {
+    return {
+      checks: {
+        length: false,
+        hasUpper: false,
+        hasLower: false,
+        hasNumber: false,
+        hasSpecial: false,
+      },
+      score: 0,
+      isValid: false,
+    };
+  }
+
+  const checks = {
+    length: value.length >= 8,
+    hasUpper: /[A-Z]/.test(value),
+    hasLower: /[a-z]/.test(value),
+    hasNumber: /\d/.test(value),
+    hasSpecial: /[@$!%*#?&]/.test(value) || /[^A-Za-z0-9]/.test(value),
+  };
+
+  const score = Object.values(checks).filter(Boolean).length;
+
+  return {
+    checks,
+    score,
+    isValid: score === 5,
+  };
+}
+
 export function isValidPassword(value) {
   if (!value || !value.trim()) {
     return "هذا الحقل مطلوب";
   }
 
-  // At least 6 chars, 1 letter, 1 number, 1 special character
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
+  const { score, checks } = checkPasswordStrength(value);
 
-  if (!passwordRegex.test(value)) {
-    return "يجب أن تحتوي كلمة السر على أحرف، أرقام، ورموز (مثل ! و&)";
+  if (score < 5) {
+    if (!checks.length) return "يجب أن تكون كلمة السر 8 أحرف على الأقل";
+    if (!checks.hasUpper) return "يجب أن تحتوي كلمة السر على حرف كبير واحد على الأقل (A-Z)";
+    if (!checks.hasLower) return "يجب أن تحتوي كلمة السر على حرف صغير واحد على الأقل (a-z)";
+    if (!checks.hasNumber) return "يجب أن تحتوي كلمة السر على رقم واحد على الأقل (0-9)";
+    if (!checks.hasSpecial) return "يجب أن تحتوي كلمة السر على رمز خاص واحد على الأقل (مثل ! و&)";
   }
 
   return "";

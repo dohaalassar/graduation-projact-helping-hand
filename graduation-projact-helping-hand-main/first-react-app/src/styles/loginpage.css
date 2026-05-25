@@ -1,4 +1,4 @@
-.auth-page-container {
+/* .auth-page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
 }
 
 /* The White Card Styling */
-.auth-card {
+/* .auth-card {
   background-color: white;
   width: 100%;
   max-width: 550px;
@@ -49,7 +49,7 @@
 }
 
 /* Form Layout */
-.auth-form {
+/* .auth-form {
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -74,6 +74,13 @@
   text-decoration: underline;
 }
 
+.auth-error {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+
 .auth-server-error {
   color: #dc3545;
   font-size: 14px;
@@ -82,18 +89,19 @@
   background-color: #f8d7da;
   padding: 10px;
   border-radius: 8px;
+  margin-top: 10px;
 }
 
 /* Buttons Group in Card */
-.buttons-group {
+/* .buttons-group {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 10px;
-}
+} */
 
 /* Responsiveness */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .auth-main-content {
     padding: 30px 15px;
   }
@@ -101,6 +109,133 @@
     padding: 40px 25px;
     max-width: 100%;
   }
+  .auth-card-title {
+    font-size: 17px; */
+  /* } */ 
+/* }  */
+.auth-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-blue);
+}
+
+.auth-main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+/* بطاقة النموذج */
+.auth-card {
+  background-color: #fff;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  padding: 45px 35px;
+  position: relative;
+}
+
+.auth-card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card-title {
+  text-align: center;
+  color: var(--text-dark);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.back-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #888 !important;
+  font-size: 14px !important;
+}
+
+.section-title {
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* النماذج */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: -10px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.auth-error {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 6px;
+  display: block;
+}
+
+.auth-server-error {
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  background-color: #fdecec;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.buttons-group,
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width:768px) {
+
+  .auth-main-content {
+    padding: 30px 15px;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    padding: 35px 22px;
+    border-radius: 16px;
+  }
+
   .auth-card-title {
     font-size: 17px;
   }
