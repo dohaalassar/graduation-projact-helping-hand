@@ -52,7 +52,11 @@ const ParentSignupPage = () => {
     if (!formData.birthMonth) newErrors.birthMonth = "هذا الحقل مطلوب";
     if (!formData.birthYear) newErrors.birthYear = "هذا الحقل مطلوب";
     if (!formData.gender) newErrors.gender = "هذا الحقل مطلوب";
-    if (!formData.nationalId.trim()) newErrors.nationalId = "هذا الحقل مطلوب";
+    if (!formData.nationalId.trim()) {
+      newErrors.nationalId = "هذا الحقل مطلوب";
+    } else if (!/^\d{9}$/.test(formData.nationalId)) {
+      newErrors.nationalId = "يجب أن يتكون رقم الهوية من 9 أرقام";
+    }
     
     // Use validation functions
     const emailError = isValidEmailOrPhone(formData.emailOrPhone);

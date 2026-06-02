@@ -130,11 +130,12 @@ const LoginPage = () => {
             />
 
             <div className="forgot-password">
-              <button
-                type="button"
+              <button 
+                type="button" 
                 className="btn-link"
+                onClick={() => navigate("/forgot-password")}
               >
-                نسيت كلمة المرور؟ اضغط هنا
+                نسيت كلمة المرور؟
               </button>
             </div>
 

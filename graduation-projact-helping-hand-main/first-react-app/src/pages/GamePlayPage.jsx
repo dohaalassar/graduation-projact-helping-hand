@@ -88,7 +88,7 @@ const GamePlayPage = () => {
         <div className="game-card">
 
           {/* Timer is always shown */}
-          <GameTimer initialMinutes={30} onTimeUp={handleTimeUp} />
+          <GameTimer sessionId={sessionId} onTimeUp={handleTimeUp} />
 
           <GameQuestionCard
             question={currentQuestion}

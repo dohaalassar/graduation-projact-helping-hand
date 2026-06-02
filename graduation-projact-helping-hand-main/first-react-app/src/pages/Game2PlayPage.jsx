@@ -45,7 +45,6 @@ const Game2PlayPage = () => {
     // 2. Handle Page Refresh / Close (Interruption)
     const handleBeforeUnload = () => {
       sessionStorage.setItem(sessionKey, 'interrupted');
-      localStorage.setItem(blockKey, 'true'); // Prevent replay this week
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -77,13 +76,12 @@ const Game2PlayPage = () => {
       // TODO: Placeholder for final result API submission
       // submitResultsToBackend(answers);
 
-      navigate('/parent/children');
+      navigate(`/game3/intro/${childId || 'default'}`);
     }
   };
 
   const handleModalClose = () => {
     setModalType(null);
-    localStorage.setItem(blockKey, 'true'); // prevent replay
   };
 
   const currentQuestion = game2Questions[currentQuestionIndex];
@@ -96,7 +94,7 @@ const Game2PlayPage = () => {
         <div className="game-card">
 
           {/* Timer is always shown */}
-          <GameTimer initialMinutes={30} onTimeUp={handleTimeUp} />
+          <GameTimer sessionId={sessionId} onTimeUp={handleTimeUp} />
 
           <GameQuestionScreen
             questionText={currentQuestion.text}

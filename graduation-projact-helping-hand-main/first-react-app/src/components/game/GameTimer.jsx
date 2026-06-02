@@ -2,9 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 import '../../styles/gameplay.css';
 
-const GameTimer = ({ initialMinutes = 30, onTimeUp }) => {
+const GameTimer = ({ sessionId, onTimeUp }) => {
   // We use seconds for easier calculation. 30 mins = 1800 seconds.
-  const [timeLeft, setTimeLeft] = useState(initialMinutes * 60);
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const sId = sessionId || 'default';
+    const endTimeStr = localStorage.getItem(`global_timer_end_${sId}`);
+    if (endTimeStr) {
+      const endTime = parseInt(endTimeStr, 10);
+      const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+      return remaining;
+    }
+    // Fallback if not started properly
+    return 30 * 60;
+  });
 
   useEffect(() => {
     // Stop if time is up
@@ -14,7 +24,14 @@ const GameTimer = ({ initialMinutes = 30, onTimeUp }) => {
     }
 
     const timerId = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerId);
+          if (onTimeUp) onTimeUp();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timerId);
