@@ -9,10 +9,19 @@ const GameIntroPage = () => {
   const { childId } = useParams();
 
   const handleStart = () => {
+    const sId = childId || 'default';
     // Set active session flag for this child
-    sessionStorage.setItem(`game_session_${childId || 'default'}`, 'active');
+    sessionStorage.setItem(`game_session_${sId}`, 'active');
+    
+    // Set global timer for the session (30 minutes from now)
+    const endTime = Date.now() + 30 * 60 * 1000;
+    localStorage.setItem(`global_timer_end_${sId}`, endTime.toString());
+    
+    // Clear any previous blocking
+    localStorage.removeItem(`game2_blocked_${sId}`);
+
     // Navigate to gameplay page
-    navigate(`/game/play/${childId || 'default'}`);
+    navigate(`/game/play/${sId}`);
   };
 
   return (

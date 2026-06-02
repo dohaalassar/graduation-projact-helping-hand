@@ -48,6 +48,13 @@ button {
 
 input, select, textarea {
   font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--dark-blue) !important;
+  border-width: 2px !important;
 }
 
 /* Common Card Style */

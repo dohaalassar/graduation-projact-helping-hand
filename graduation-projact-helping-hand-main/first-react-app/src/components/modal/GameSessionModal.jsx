@@ -17,7 +17,9 @@ const GameSessionModal = ({ type, isOpen, onClose }) => {
     ? "تم اكتشاف خروج من اللعبة"
     : "انتهت الجلسة";
 
-  const nextSteps = "لن تتمكن من إعادة اللعب هذا الأسبوع";
+  const nextSteps = isInterrupted 
+    ? "يجب عليك إعادة الجلسة من البداية لعدم اكتمالها"
+    : "لن تتمكن من إكمال الألعاب المتبقية";
 
   const handleReturn = () => {
     onClose();

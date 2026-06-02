@@ -1,7 +1,8 @@
 import game21Img from '../assets/Game21.jpg';
 import game22Img from '../assets/Game22.jpg';
 import game23Img from '../assets/Game23.jpg';
-import game24Img from '../assets/Game24.jpg';
+import game25Img from '../assets/Game25.jpg';
+import game26Img from '../assets/Game26.jpg';
 
 export const game2Questions = [
   {
@@ -39,13 +40,24 @@ export const game2Questions = [
   },
   {
     id: 4,
-    text: 'ماذا تفعل اذا وجدت علبة طعام ملقاة على الأرض ؟',
-    image: game24Img,
-    alt: 'طفل يجد علبة طعام',
+    text: 'ماذا تفعل اذا وجدت شواكل ملقاة على الأرض في ساحة المخيم ؟',
+    image: game25Img,
+    alt: 'طفل يجد شواكل على الأرض',
     options: [
       { id: 'hide', label: 'اخذها وأخبئها' },
       { id: 'leave', label: 'أتركها مكانها' },
       { id: 'return', label: 'أعيدها لصاحبها' }
+    ]
+  },
+  {
+    id: 5,
+    text: 'ماذا تفعل اذا كسرت المصباح الشمسي عن طريق الخطأ وانت وحدك ؟',
+    image: game26Img,
+    alt: 'طفل كسر المصباح الشمسي',
+    options: [
+      { id: 'lie', label: 'أكذب وأتهم الاخرين' },
+      { id: 'silent', label: 'أبقى صامتاً' },
+      { id: 'truth', label: 'أقول الحقيقة' }
     ]
   }
 ];
