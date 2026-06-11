@@ -6,45 +6,38 @@ import GameTimer from '../components/game/GameTimer';
 import GameSessionModal from '../components/modal/GameSessionModal';
 import GameQuestionCard from '../components/game/GameQuestionCard';
 import { gameQuestions } from '../data/gameQuestions';
+import { submitGameResult } from '../services/childService';
 import '../styles/gameplay.css';
 
 const GamePlayPage = () => {
-  const navigate = useNavigate();
+  const navigate    = useNavigate();
   const { childId } = useParams();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [modalType, setModalType] = useState(null); // 'interrupted' or 'expired'
-  const [isFinished, setIsFinished] = useState(false);
+  const [modalType, setModalType]           = useState(null);
+  const [isFinished, setIsFinished]         = useState(false);
   const [isSessionValid, setIsSessionValid] = useState(true);
+  const [answers, setAnswers]               = useState([]); // ← تخزين الإجابات
+  const [startTime]                         = useState(Date.now());
 
-  // TODO: Placeholder for storing answers to send to backend later
-  // const [answers, setAnswers] = useState([]);
-
-  const sessionId = childId || 'default';
+  const sessionId  = childId || 'default';
   const sessionKey = `game_session_${sessionId}`;
 
   useEffect(() => {
-    // 1. Validate Session on Mount
     const currentSessionStatus = sessionStorage.getItem(sessionKey);
 
     if (currentSessionStatus !== 'active') {
-      // If they refreshed or navigated directly without start flag, session is invalid
       setIsSessionValid(false);
       setModalType('interrupted');
       return;
     }
 
-    // 2. Handle Page Refresh / Close (Interruption)
     const handleBeforeUnload = () => {
       sessionStorage.setItem(sessionKey, 'interrupted');
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // 3. Cleanup event listener
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [sessionKey]);
 
   const handleTimeUp = () => {
@@ -59,20 +52,51 @@ const GamePlayPage = () => {
     setSelectedOption(optionId);
   };
 
-  const handleNext = () => {
-    // TODO: Placeholder for saving current answer
-    // setAnswers([...answers, { questionId: currentQuestion.id, answerId: selectedOption }]);
+  const handleNext = async () => {
+    const currentQuestion = gameQuestions[currentQuestionIndex];
+
+    // ── احسبي النقاط للإجابة الحالية ──
+    const selected = currentQuestion.options?.find(
+      (o) => o.id === selectedOption
+    );
+    const pointsAwarded = selected?.points ?? 0;
+
+    // ── احفظي الإجابة ──
+    const newAnswers = [
+      ...answers,
+      {
+        scenarioId:     currentQuestion.id,
+        selectedOption: selectedOption,
+        pointsAwarded,
+        reactionTimeMs: Date.now() - startTime,
+      },
+    ];
+    setAnswers(newAnswers);
 
     if (currentQuestionIndex < gameQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
     } else {
-      // Mark as finished
+      // ── آخر سؤال ──
       setIsFinished(true);
       sessionStorage.setItem(sessionKey, 'completed');
 
-      // TODO: Placeholder for final result API submission
-      // submitResultsToBackend(answers);
+      // ── أرسلي النتائج للباكند ──
+      try {
+        const assessmentId    = sessionStorage.getItem(`assessment_${childId}`);
+        const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+        if (assessmentId) {
+          await submitGameResult(
+            assessmentId,
+            1,            // ← Game 1: Journey of Feelings
+            newAnswers,
+            durationSeconds
+          );
+        }
+      } catch (err) {
+        console.error('خطأ في إرسال نتائج اللعبة 1:', err);
+      }
 
       navigate(`/game2/intro/${childId || 'default'}`);
     }
@@ -87,7 +111,6 @@ const GamePlayPage = () => {
       <main className="game-main-content">
         <div className="game-card">
 
-          {/* Timer is always shown */}
           <GameTimer sessionId={sessionId} onTimeUp={handleTimeUp} />
 
           <GameQuestionCard
@@ -97,12 +120,12 @@ const GamePlayPage = () => {
             isSessionValid={isSessionValid}
             onNext={handleNext}
           />
+
         </div>
       </main>
 
       <Footer />
 
-      {/* Interruption / Timeout Modal */}
       <GameSessionModal
         isOpen={!!modalType}
         type={modalType}

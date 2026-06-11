@@ -1,67 +1,109 @@
+import API from './api';
+
+// ─────────────────────────────────────────
+// تسجيل الدخول
+// ─────────────────────────────────────────
 export async function loginUser(data) {
-  console.log("[authService] loginUser called with:", data);
+  try {
+    const response = await API.post('/auth/login', {
+      email: data.emailOrPhone,
+      password: data.password,
+    });
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { token, user } = response.data;
 
-  // Default hardcoded mock users
-  const mockUsers = [
-    { emailOrPhone: "parent@gmail.com", password: "Password123!", role: "parent" },
-    { emailOrPhone: "psychologist@gmail.com", password: "Password123!", role: "psychologist" }
-  ];
+    // احفظي الـ token والـ user في localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
 
-  // Retrieve dynamically registered users from localStorage
-  const localUsersJson = localStorage.getItem("registered_users");
-  const localUsers = localUsersJson ? JSON.parse(localUsersJson) : [];
+    return {
+      success: true,
+      role: user.role,
+      user,
+      token,
+      message: 'تم تسجيل الدخول بنجاح',
+    };
+  } catch (error) {
+    const message = error.response?.data?.message || 'حدث خطأ';
 
-  // Combine both default and dynamic users
-  const allUsers = [...mockUsers, ...localUsers];
-
-  const user = allUsers.find(
-    (u) => u.emailOrPhone.trim().toLowerCase() === data.emailOrPhone.trim().toLowerCase()
-  );
-
-  if (!user) {
-    throw new Error("EMAIL_NOT_FOUND");
+    if (message.includes('Invalid email')) {
+      throw new Error('EMAIL_NOT_FOUND');
+    }
+    if (message.includes('password')) {
+      throw new Error('INCORRECT_PASSWORD');
+    }
+    throw new Error(message);
   }
-
-  if (user.password !== data.password) {
-    throw new Error("INCORRECT_PASSWORD");
-  }
-
-  return { success: true, role: user.role, message: "تم تسجيل الدخول بنجاح" };
 }
 
+// ─────────────────────────────────────────
+// تسجيل حساب والد
+// ─────────────────────────────────────────
 export async function registerUser(userData) {
-  console.log("[authService] registerUser called with:", userData);
+  try {
+    const response = await API.post('/auth/register', {
+      name: `${userData.firstName} ${userData.lastName}`,
+      email: userData.emailOrPhone,
+      password: userData.password,
+      role: userData.role,
+    });
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { token, user } = response.data;
 
-  // Retrieve current users
-  const localUsersJson = localStorage.getItem("registered_users");
-  const localUsers = localUsersJson ? JSON.parse(localUsersJson) : [];
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
 
-  // Predefined users to avoid duplicate emails/phones
-  const mockUsers = [
-    { emailOrPhone: "parent@gmail.com" },
-    { emailOrPhone: "psychologist@gmail.com" }
-  ];
+    return {
+      success: true,
+      token,
+      user,
+      message: 'تم تسجيل الحساب بنجاح',
+    };
+  } catch (error) {
+    const message = error.response?.data?.message || 'حدث خطأ';
 
-  const exists = [...mockUsers, ...localUsers].some(
-    (u) => u.emailOrPhone.trim().toLowerCase() === userData.emailOrPhone.trim().toLowerCase()
-  );
-
-  if (exists) {
-    throw new Error("EMAIL_ALREADY_EXISTS");
+    if (message.includes('already')) {
+      throw new Error('EMAIL_ALREADY_EXISTS');
+    }
+    throw new Error(message);
   }
+}
 
-  localUsers.push({
-    emailOrPhone: userData.emailOrPhone,
-    password: userData.password,
-    role: userData.role, // "parent" or "psychologist"
-    firstName: userData.firstName,
-    lastName: userData.lastName,
+// ─────────────────────────────────────────
+// تسجيل الخروج
+// ─────────────────────────────────────────
+export function logoutUser() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+}
+
+// ─────────────────────────────────────────
+// الحصول على المستخدم الحالي
+// ─────────────────────────────────────────
+export function getCurrentUser() {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+}
+
+// ─────────────────────────────────────────
+// التحقق إذا المستخدم مسجل دخول
+// ─────────────────────────────────────────
+export function isAuthenticated() {
+  return !!localStorage.getItem('token');
+}
+
+// إرسال رمز التحقق للإيميل
+export async function sendResetCode(email) {
+  const response = await API.post('/auth/forgot-password', { email });
+  return response.data;
+}
+
+// التحقق من الرمز وتغيير كلمة السر
+export async function resetPassword(email, code, newPassword) {
+  const response = await API.post('/auth/reset-password', {
+    email,
+    code,
+    newPassword,
   });
-
-  localStorage.setItem("registered_users", JSON.stringify(localUsers));
-  return { success: true, message: "تم تسجيل الحساب بنجاح" };
+  return response.data;
 }

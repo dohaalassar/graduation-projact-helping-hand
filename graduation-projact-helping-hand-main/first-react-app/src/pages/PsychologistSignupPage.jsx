@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { IdCard, Phone } from "lucide-react";
 import AuthLayout from "../components/auth/AuthLayout";
 import AuthCard from "../components/auth/AuthCard";
@@ -13,7 +12,7 @@ import { useFormState } from "../hooks/useFormState";
 import { isRequired, isValidEmailOrPhone, isValidPassword, isValidEmployeeId } from "../utils/validation";
 import { dayOptions, monthOptions, yearOptions, genderOptions } from "../utils/dateOptions";
 import { registerUser } from "../services/authService";
-// import "../styles/psychologistsignup.css";
+import { useAuth } from "../context/AuthContext"; // ← جديد
 
 const initialValues = {
   firstName: "",
@@ -29,6 +28,7 @@ const initialValues = {
 
 const PsychologistSignupPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth(); // ← جديد
 
   const {
     values,
@@ -43,15 +43,15 @@ const PsychologistSignupPage = () => {
 
   const validate = () => {
     const newErrors = {};
-    newErrors.firstName = isRequired(values.firstName);
-    newErrors.lastName = isRequired(values.lastName);
-    newErrors.birthDay = isRequired(values.birthDay);
-    newErrors.birthMonth = isRequired(values.birthMonth);
-    newErrors.birthYear = isRequired(values.birthYear);
-    newErrors.gender = isRequired(values.gender);
-    newErrors.employeeId = isValidEmployeeId(values.employeeId);
+    newErrors.firstName    = isRequired(values.firstName);
+    newErrors.lastName     = isRequired(values.lastName);
+    newErrors.birthDay     = isRequired(values.birthDay);
+    newErrors.birthMonth   = isRequired(values.birthMonth);
+    newErrors.birthYear    = isRequired(values.birthYear);
+    newErrors.gender       = isRequired(values.gender);
+    newErrors.employeeId   = isValidEmployeeId(values.employeeId);
     newErrors.emailOrPhone = isValidEmailOrPhone(values.emailOrPhone);
-    newErrors.password = isValidPassword(values.password);
+    newErrors.password     = isValidPassword(values.password);
 
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
@@ -60,16 +60,26 @@ const PsychologistSignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
     setLoading(true);
     setServerError(null);
+
     try {
-      await registerUser({ ...values, role: "psychologist" });
+      const response = await registerUser({
+        ...values,
+        role: "psychologist",
+      });
+
+      login(response.user); // ← احفظي المستخدم في Context
+
+      // الأخصائي النفسي يروح لصفحة انتظار لأنه محتاج admin يعيّنه
       navigate("/login");
+
     } catch (error) {
       if (error.message === "EMAIL_ALREADY_EXISTS") {
         setErrors((prev) => ({
           ...prev,
-          emailOrPhone: "البريد الإلكتروني أو رقم الهاتف مسجل بالفعل",
+          emailOrPhone: "البريد الإلكتروني مسجل بالفعل",
         }));
       } else {
         setServerError(error.message || "حدث خطأ في الاتصال، حاول مرة أخرى");
@@ -88,20 +98,58 @@ const PsychologistSignupPage = () => {
           fallbackPath="/"
         >
           <form onSubmit={handleSubmit} className="psychologist-signup-form" noValidate>
+
             <div className="section-title">الاسم</div>
             <FormRow columns={2}>
-              <TextInput placeholder="الاسم الأول" value={values.firstName} onChange={handleChange("firstName")} error={errors.firstName} showIcon={false} />
-              <TextInput placeholder="اسم العائلة" value={values.lastName} onChange={handleChange("lastName")} error={errors.lastName} showIcon={false} />
+              <TextInput
+                placeholder="الاسم الأول"
+                value={values.firstName}
+                onChange={handleChange("firstName")}
+                error={errors.firstName}
+                showIcon={false}
+              />
+              <TextInput
+                placeholder="اسم العائلة"
+                value={values.lastName}
+                onChange={handleChange("lastName")}
+                error={errors.lastName}
+                showIcon={false}
+              />
             </FormRow>
 
             <div className="section-title">تاريخ الميلاد</div>
             <FormRow columns={3}>
-              <SelectInput options={dayOptions} placeholder="اليوم" value={values.birthDay} onChange={handleChange("birthDay")} error={errors.birthDay} />
-              <SelectInput options={monthOptions} placeholder="الشهر" value={values.birthMonth} onChange={handleChange("birthMonth")} error={errors.birthMonth} />
-              <SelectInput options={yearOptions} placeholder="السنة" value={values.birthYear} onChange={handleChange("birthYear")} error={errors.birthYear} />
+              <SelectInput
+                options={dayOptions}
+                placeholder="اليوم"
+                value={values.birthDay}
+                onChange={handleChange("birthDay")}
+                error={errors.birthDay}
+              />
+              <SelectInput
+                options={monthOptions}
+                placeholder="الشهر"
+                value={values.birthMonth}
+                onChange={handleChange("birthMonth")}
+                error={errors.birthMonth}
+              />
+              <SelectInput
+                options={yearOptions}
+                placeholder="السنة"
+                value={values.birthYear}
+                onChange={handleChange("birthYear")}
+                error={errors.birthYear}
+              />
             </FormRow>
 
-            <SelectInput label="الجنس" options={genderOptions} placeholder="تحديد الجنس" value={values.gender} onChange={handleChange("gender")} error={errors.gender} />
+            <SelectInput
+              label="الجنس"
+              options={genderOptions}
+              placeholder="تحديد الجنس"
+              value={values.gender}
+              onChange={handleChange("gender")}
+              error={errors.gender}
+            />
 
             <TextInput
               label="الرقم الوظيفي"
@@ -132,7 +180,16 @@ const PsychologistSignupPage = () => {
               showStrengthMeter={true}
             />
 
-            {serverError && <div className="server-error-box">{serverError}</div>}
+            {serverError && (
+              <div style={{
+                color: "#ef4444",
+                textAlign: "center",
+                marginTop: "1rem",
+                fontSize: "14px"
+              }}>
+                {serverError}
+              </div>
+            )}
 
             <div className="buttons-group">
               <PrimaryButton type="submit" loading={loading}>
@@ -142,6 +199,7 @@ const PsychologistSignupPage = () => {
                 لدي حساب بالفعل
               </SecondaryButton>
             </div>
+
           </form>
         </AuthCard>
       </AuthLayout>

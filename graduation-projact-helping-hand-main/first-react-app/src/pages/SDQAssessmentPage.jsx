@@ -1,424 +1,301 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { getSDQQuestions, submitSDQ } from "../services/childService";
 import "../styles/sdqassessment.css";
 
-const questions = [
-  "يهتم بمشاعر الآخرين",
-  "لا يستطيع البقاء أو الاستقرار في مكان واحد (كثير الحركة)",
-  "كثيراً ما يشكو من صداع أو آلام في البطن أو الشعور بالغثيان",
-  "يشارك الآخرين بسهولة فيما يخصه (ألعاب، أقلام، حلويات، إلخ)",
-  "كثيراً ما تنتابه نوبات غضب أو سريع الغضب",
-  "يحب العزلة أو يميل إلى اللعب لوحده",
-  "مطيع على وجه العموم، عادة يفعل ما يطلبه منه الكبار",
-  "يقلق من أشياء كثيرة، كثيراً ما يبدو عليه القلق",
-  "يساعد الآخرين إذا حدث لأحدهم مكروه",
-  "يتململ أو يتلوى باستمرار أثناء الجلوس",
-  "لديه على الأقل صديق واحد جيد",
-  "كثيراً ما يتعارك مع الآخرين من نفس سنه أو يستأسد عليهم",
-  "كثيراً ما يكون غير سعيد أو حزين أو يبكي بسهولة",
-  "في الغالب محبوب ممن هم في سنه",
-  "يتشتت انتباهه بسرعة أو قليل التركيز",
-  "عصبي أو متشبث بالآخرين في المواقف الجديدة، يفقد ثقته بنفسه بسهولة",
-  "لطيف مع من هم أصغر منه",
-  "كثيراً ما يكذب أو يخدع أو يغش",
-  "يُستهزأ منه أو يُستأسد عليه",
-  "كثيراً ما يتطوع لمساعدة الآخرين",
-  "يفكر قبل أن يتصرف",
-  "يسرق من البيت أو المدرسة",
-  "ينسجم مع الكبار أكثر",
-  "يخاف من أشياء كثيرة",
-  "يتابع أداء الواجبات حتى النهاية"
-];
+// خريطة تحويل الإجابة الرقمية إلى النص المطلوب للباكند
+const scoreToAnswer = {
+  "0": "not_true",
+  "1": "somewhat_true",
+  "2": "certainly_true",
+};
 
 const SDQAssessmentPage = () => {
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const childName = location.state?.childName || "";
+  const gender    = location.state?.gender    || "male";
+  const childId   = location.state?.childId  || null;
+  const childTerm = gender === "male" ? "طفلك" : "طفلتك";
 
-  const childName =
-    location.state?.childName || "نورا";
-
-  const gender =
-    location.state?.gender || "female";
-
-  const childTerm =
-    gender === "male"
-      ? "طفلك"
-      : "طفلتك";
-
-  const [step, setStep] = useState(0);
-
+  const [step, setStep]       = useState(0);
   const [answers, setAnswers] = useState({});
+  const [questions, setQuestions]   = useState([]);
+  const [loadingQ, setLoadingQ]     = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError]   = useState("");
+  const [validationError, setValidationError]         = useState("");
+  const [highlightedUnanswered, setHighlightedUnanswered] = useState([]);
 
-  const [validationError, setValidationError] = useState("");
-
-  const [highlightedUnanswered,
-    setHighlightedUnanswered] = useState([]);
+  // ── جيبي الأسئلة من الباكند عند تحميل الصفحة ──
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const data = await getSDQQuestions();
+        setQuestions(data);
+      } catch (error) {
+        console.error("خطأ في جلب الأسئلة:", error);
+      } finally {
+        setLoadingQ(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
 
   const handleAnswerChange = (qIndex, value) => {
-
-    setAnswers((prev) => ({
-      ...prev,
-      [qIndex]: value
-    }));
-
-    setHighlightedUnanswered((prev) =>
-      prev.filter((item) => item !== qIndex)
-    );
-
+    setAnswers((prev) => ({ ...prev, [qIndex]: value }));
+    setHighlightedUnanswered((prev) => prev.filter((i) => i !== qIndex));
     setValidationError("");
   };
 
-  const nextStep = () => {
-    setStep((prev) => prev + 1);
-  };
+  const nextStep = () => setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
+  const handleClose = () => navigate("/parent/dashboard");
 
-  const prevStep = () => {
-    setStep((prev) => prev - 1);
-  };
-
-  const handleClose = () => {
-    navigate("/parent/dashboard");
-  };
-
-  const handleNextQuestionsStep = (
-    startIndex,
-    endIndex
-  ) => {
-
+  // ── التحقق من الإجابات قبل التالي ──
+  const handleNextQuestionsStep = (startIndex, endIndex) => {
     const unanswered = [];
-
-    for (
-      let i = startIndex;
-      i < endIndex;
-      i++
-    ) {
-
-      if (
-        answers[i] === undefined ||
-        answers[i] === ""
-      ) {
-
+    for (let i = startIndex; i < endIndex; i++) {
+      if (answers[i] === undefined || answers[i] === "") {
         unanswered.push(i);
-
       }
-
     }
 
     if (unanswered.length > 0) {
-
-      setHighlightedUnanswered(
-        unanswered
-      );
-
-      setValidationError(
-        "يرجى الإجابة على جميع الأسئلة قبل المتابعة"
-      );
-
+      setHighlightedUnanswered(unanswered);
+      setValidationError("يرجى الإجابة على جميع الأسئلة قبل المتابعة");
       setTimeout(() => {
-
-        const firstQuestion =
-          document.querySelector(
-            ".question-item-card.unanswered-highlight"
-          );
-
-        if (firstQuestion) {
-
-          firstQuestion.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-
-        }
-
+        const el = document.querySelector(".question-item-card.unanswered-highlight");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 100);
-
       return;
-
     }
 
     setValidationError("");
     setHighlightedUnanswered([]);
-
     nextStep();
-
   };
 
-  const renderQuestions = (startIndex, endIndex) => (
+  // ── إرسال الإجابات للباكند ──
+  const handleSubmitSDQ = async () => {
+    if (!childId) {
+      setSubmitError("لم يتم تحديد الطفل. يرجى العودة والمحاولة مجدداً.");
+      return;
+    }
 
-    <div className="sdq-questions-container">
+    setSubmitting(true);
+    setSubmitError("");
 
-      <div className="questions-page-header">
+    try {
+      // حوّلي الإجابات للشكل المطلوب من الباكند
+      const formattedAnswers = questions.map((q, index) => ({
+        itemNumber: q.itemNumber,
+        answer: scoreToAnswer[answers[index]],
+      }));
 
-        <ChevronRight
-          className="header-back-arrow"
-          onClick={prevStep}
-        />
+      await submitSDQ(childId, formattedAnswers);
 
-        <h2 className="questions-title">
-          اختر الإجابة التي تناسب السؤال
-        </h2>
+      // انتقلي لصفحة النجاح (step 5)
+      nextStep();
 
-      </div>
+    } catch (error) {
+      setSubmitError(
+        error.response?.data?.message || "حدث خطأ أثناء إرسال التقييم"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-      <div className="questions-list">
+  // ── عرض الأسئلة ──
+  const renderQuestions = (startIndex, endIndex) => {
+    const isLastPage = endIndex >= 25;
 
-        {questions
-          .slice(startIndex, endIndex)
-          .map((q, idx) => {
+    return (
+      <div className="sdq-questions-container">
+        <div className="questions-page-header">
+          <ChevronRight className="header-back-arrow" onClick={prevStep} />
+          <h2 className="questions-title">اختر الإجابة التي تناسب السؤال</h2>
+        </div>
 
-            const qIndex =
-              startIndex + idx;
-
-            const isHighlighted =
-              highlightedUnanswered.includes(
-                qIndex
-              );
+        <div className="questions-list">
+          {questions.slice(startIndex, endIndex).map((q, idx) => {
+            const qIndex      = startIndex + idx;
+            const isHighlighted = highlightedUnanswered.includes(qIndex);
 
             return (
-
               <div
                 key={qIndex}
-                className={`question-item-card ${isHighlighted
-                    ? "unanswered-highlight"
-                    : ""
-                  }`}
+                className={`question-item-card ${isHighlighted ? "unanswered-highlight" : ""}`}
               >
-
                 <p className="question-text">
-
                   <span className="q-number">
-
-                    {(qIndex + 1)
-                      .toString()
-                      .padStart(2, "0")}.
-
+                    {(qIndex + 1).toString().padStart(2, "0")}.
                   </span>
-
-                  {q}
-
+                  {q.textArabic}
                 </p>
 
                 <div className="options-group">
-
-                  <label className="option-label">
-
-                    <input
-                      type="radio"
-                      name={`q-${qIndex}`}
-                      checked={
-                        answers[qIndex] === "0"
-                      }
-                      onChange={() =>
-                        handleAnswerChange(
-                          qIndex,
-                          "0"
-                        )
-                      }
-                    />
-
-                    <span>
-                      غير صحيح
-                    </span>
-
-                  </label>
-
-                  <label className="option-label">
-
-                    <input
-                      type="radio"
-                      name={`q-${qIndex}`}
-                      checked={
-                        answers[qIndex] === "1"
-                      }
-                      onChange={() =>
-                        handleAnswerChange(
-                          qIndex,
-                          "1"
-                        )
-                      }
-                    />
-
-                    <span>
-                      صحيح نوعاً ما
-                    </span>
-
-                  </label>
-
-                  <label className="option-label">
-
-                    <input
-                      type="radio"
-                      name={`q-${qIndex}`}
-                      checked={
-                        answers[qIndex] === "2"
-                      }
-                      onChange={() =>
-                        handleAnswerChange(
-                          qIndex,
-                          "2"
-                        )
-                      }
-                    />
-
-                    <span>
-                      صحيح بالتأكيد
-                    </span>
-
-                  </label>
-
+                  {[
+                    { value: "0", label: "غير صحيح" },
+                    { value: "1", label: "صحيح نوعاً ما" },
+                    { value: "2", label: "صحيح بالتأكيد" },
+                  ].map((option) => (
+                    <label key={option.value} className="option-label">
+                      <input
+                        type="radio"
+                        name={`q-${qIndex}`}
+                        checked={answers[qIndex] === option.value}
+                        onChange={() => handleAnswerChange(qIndex, option.value)}
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
                 </div>
-
               </div>
-
             );
-
           })}
-
-      </div>
-
-      {validationError && (
-
-        <div
-          className="sdq-validation-error-wrapper"
-        >
-
-          <p className="sdq-validation-error">
-
-            {validationError}
-
-          </p>
-
         </div>
 
-      )}
+        {validationError && (
+          <div className="sdq-validation-error-wrapper">
+            <p className="sdq-validation-error">{validationError}</p>
+          </div>
+        )}
 
-      <div className="questions-footer-actions">
+        {submitError && (
+          <p className="auth-server-error">{submitError}</p>
+        )}
 
-        <button
-          className="btn-primary next-btn"
-          onClick={() =>
-            handleNextQuestionsStep(
-              startIndex,
-              endIndex
-            )
-          }
-        >
-
-          {endIndex >= 25
-            ? "إنهاء"
-            : "التالي"}
-
-        </button>
-
+        <div className="questions-footer-actions">
+          <button
+            className="btn-primary next-btn"
+            disabled={submitting}
+            onClick={() => {
+              if (isLastPage) {
+                // التحقق أولاً ثم الإرسال
+                const unanswered = [];
+                for (let i = startIndex; i < endIndex; i++) {
+                  if (answers[i] === undefined || answers[i] === "") {
+                    unanswered.push(i);
+                  }
+                }
+                if (unanswered.length > 0) {
+                  setHighlightedUnanswered(unanswered);
+                  setValidationError("يرجى الإجابة على جميع الأسئلة قبل المتابعة");
+                  return;
+                }
+                handleSubmitSDQ();
+              } else {
+                handleNextQuestionsStep(startIndex, endIndex);
+              }
+            }}
+          >
+            {submitting ? "جاري الإرسال..." : isLastPage ? "إنهاء" : "التالي"}
+          </button>
+        </div>
       </div>
+    );
+  };
 
-    </div>
-
-  );
+  // ── شاشة تحميل الأسئلة ──
+  if (loadingQ) {
+    return (
+      <div style={{
+        display: "flex", justifyContent: "center",
+        alignItems: "center", minHeight: "100vh",
+        fontSize: "20px", color: "#2c4a6b", fontFamily: "Cairo, sans-serif"
+      }}>
+        جاري تحميل الأسئلة...
+      </div>
+    );
+  }
 
   return (
-
     <div className="sdq-assessment-page">
-
       <Header />
 
       <main className="sdq-main-content">
 
+        {/* ── Step 0: ترحيب ── */}
         {step === 0 && (
-          <div className="sdq-step-card" style={{ position: 'relative', padding: '40px 30px', textAlign: 'center', width: '100%', maxWidth: '550px', margin: '40px auto', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-            <ChevronRight style={{ position: 'absolute', top: '20px', right: '20px', cursor: 'pointer', color: '#888' }} onClick={handleClose} />
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', marginBottom: '40px', lineHeight: '1.5', color: '#000', marginTop: '20px' }}>
+          <div className="sdq-step-card" style={{ position: "relative", padding: "40px 30px", textAlign: "center", width: "100%", maxWidth: "550px", margin: "40px auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }}>
+            <ChevronRight style={{ position: "absolute", top: "20px", right: "20px", cursor: "pointer", color: "#888" }} onClick={handleClose} />
+            <h2 style={{ fontSize: "1.6rem", fontWeight: "bold", marginBottom: "40px", lineHeight: "1.5", color: "#000", marginTop: "20px" }}>
               مرحبا بك في نموذج تقييم نقاط القوة والصعوبات (SDQ)
             </h2>
-            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '50px', color: '#000' }}>
+            <p style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "50px", color: "#000" }}>
               الخاص ب{childTerm} {childName}
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '85%', margin: '0 auto' }}>
-              <button className="btn-primary" style={{ padding: '14px', fontSize: '1.2rem', borderRadius: '8px', fontWeight: 'bold' }} onClick={nextStep}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px", width: "85%", margin: "0 auto" }}>
+              <button className="btn-primary" style={{ padding: "14px", fontSize: "1.2rem", borderRadius: "8px", fontWeight: "bold" }} onClick={nextStep}>
                 التالي
               </button>
-              <button className="btn-secondary" style={{ padding: '14px', fontSize: '1.2rem', borderRadius: '8px', backgroundColor: 'white', border: '1px solid #ddd', color: '#000', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }} onClick={handleClose}>
+              <button style={{ padding: "14px", fontSize: "1.2rem", borderRadius: "8px", backgroundColor: "white", border: "1px solid #ddd", color: "#000", fontWeight: "bold", cursor: "pointer" }} onClick={handleClose}>
                 اغلاق
               </button>
             </div>
           </div>
         )}
 
+        {/* ── Step 1: شرح الـ SDQ ── */}
         {step === 1 && (
-          <div className="sdq-step-card" style={{ position: 'relative', padding: '40px 30px', textAlign: 'center', width: '100%', maxWidth: '550px', margin: '40px auto', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-            <ChevronRight style={{ position: 'absolute', top: '20px', right: '20px', cursor: 'pointer', color: '#888' }} onClick={prevStep} />
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', marginBottom: '30px', lineHeight: '1.5', color: '#000', marginTop: '10px' }}>
-              ما هو نموذج تقييم نقاط القوة والصعوبات(SDQ) ؟
+          <div className="sdq-step-card" style={{ position: "relative", padding: "40px 30px", textAlign: "center", width: "100%", maxWidth: "550px", margin: "40px auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }}>
+            <ChevronRight style={{ position: "absolute", top: "20px", right: "20px", cursor: "pointer", color: "#888" }} onClick={prevStep} />
+            <h2 style={{ fontSize: "1.6rem", fontWeight: "bold", marginBottom: "30px", lineHeight: "1.5", color: "#000", marginTop: "10px" }}>
+              ما هو نموذج تقييم نقاط القوة والصعوبات (SDQ)؟
             </h2>
-            <p style={{ fontSize: '1.1rem', lineHeight: '1.7', marginBottom: '25px', textAlign: 'right', fontWeight: '600', color: '#222' }}>
-              هو استبيان موجز وسريع يتكون من 25 بند يستخدم لفحص الحالة العاطفية والسلوكية للأطفال من خلال السؤال عن 5 مقاييس وهي : الأعراض العاطفية، مشاكل السلوك، فرط النشاط/قلة الانتباه، مشاكل العلاقات مع الأقران، والسلوك الاجتماعي الإيجابي. كل مقياس من الخمسة يتكون من 5 بنود تقوم انت كولي أمر بالاجابة عنها.
+            <p style={{ fontSize: "1.1rem", lineHeight: "1.7", marginBottom: "25px", textAlign: "right", fontWeight: "600", color: "#222" }}>
+              هو استبيان موجز وسريع يتكون من 25 بند يستخدم لفحص الحالة العاطفية والسلوكية للأطفال من خلال السؤال عن 5 مقاييس وهي: الأعراض العاطفية، مشاكل السلوك، فرط النشاط/قلة الانتباه، مشاكل العلاقات مع الأقران، والسلوك الاجتماعي الإيجابي.
             </p>
-            <p style={{ fontSize: '1.15rem', fontWeight: 'bold', marginBottom: '40px', textAlign: 'right', color: '#000' }}>
-              الاسئلة عن الطفل لكن أنت من يجيب عنها.
+            <p style={{ fontSize: "1.15rem", fontWeight: "bold", marginBottom: "40px", textAlign: "right", color: "#000" }}>
+              الأسئلة عن الطفل لكن أنت من يجيب عنها.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '85%', margin: '0 auto' }}>
-              <button className="btn-primary" style={{ padding: '14px', fontSize: '1.2rem', borderRadius: '8px', fontWeight: 'bold' }} onClick={nextStep}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px", width: "85%", margin: "0 auto" }}>
+              <button className="btn-primary" style={{ padding: "14px", fontSize: "1.2rem", borderRadius: "8px", fontWeight: "bold" }} onClick={nextStep}>
                 ابدأ
               </button>
-              <button className="btn-secondary" style={{ padding: '14px', fontSize: '1.2rem', borderRadius: '8px', backgroundColor: 'white', border: '1px solid #ddd', color: '#000', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }} onClick={handleClose}>
+              <button style={{ padding: "14px", fontSize: "1.2rem", borderRadius: "8px", backgroundColor: "white", border: "1px solid #ddd", color: "#000", fontWeight: "bold", cursor: "pointer" }} onClick={handleClose}>
                 اغلاق
               </button>
             </div>
           </div>
         )}
 
-        {step === 2 &&
-          renderQuestions(0, 8)}
+        {/* ── Steps 2-4: الأسئلة ── */}
+        {step === 2 && renderQuestions(0, 8)}
+        {step === 3 && renderQuestions(8, 16)}
+        {step === 4 && renderQuestions(16, 25)}
 
-        {step === 3 &&
-          renderQuestions(8, 16)}
-
-        {step === 4 &&
-          renderQuestions(16, 25)}
-
+        {/* ── Step 5: نجاح ── */}
         {step === 5 && (
-
-          <div className="sdq-step-card">
-
-            <h2>
-
-              تهانينا لقد أنهيت تقييم
-              {" "}
-              {childTerm}
-              {" "}
-              {childName}
-
+          <div className="sdq-step-card" style={{ textAlign: "center", padding: "60px 30px", maxWidth: "550px", margin: "40px auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }}>
+            <div style={{ fontSize: "60px", marginBottom: "20px" }}>✅</div>
+            <h2 style={{ fontSize: "1.6rem", fontWeight: "bold", marginBottom: "15px", color: "#00a651" }}>
+              تم إرسال التقييم بنجاح!
             </h2>
-
+            <p style={{ fontSize: "1.1rem", color: "#555", marginBottom: "40px", lineHeight: "1.7" }}>
+              تهانينا! لقد أنهيت تقييم {childTerm} {childName}. يمكنك الآن البدء بجلسات الألعاب التقييمية.
+            </p>
             <button
-              className="btn-success"
-              onClick={() =>
-                navigate(
-                  "/parent/dashboard"
-                )
-              }
+              className="btn-primary"
+              style={{ padding: "14px 40px", fontSize: "1.1rem", borderRadius: "8px" }}
+              onClick={() => navigate("/parent/dashboard")}
             >
-
               صفحتي الرئيسية
-
             </button>
-
           </div>
-
         )}
 
       </main>
 
       <Footer />
-
     </div>
-
   );
-
 };
 
 export default SDQAssessmentPage;

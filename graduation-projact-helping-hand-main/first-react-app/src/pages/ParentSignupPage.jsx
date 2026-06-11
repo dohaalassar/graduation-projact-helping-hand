@@ -11,11 +11,13 @@ import FormRow from "../components/auth/FormRow";
 import { dayOptions, monthOptions, yearOptions, genderOptions } from "../utils/dateOptions";
 import { isValidEmailOrPhone, isValidPassword } from "../utils/validation";
 import { registerUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext"; 
 import { IdCard, Phone } from "lucide-react";
-// import "../styles/parentsignup.css";
 
 const ParentSignupPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth(); 
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,40 +30,33 @@ const ParentSignupPage = () => {
     password: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors]           = useState({});
+  const [loading, setLoading]         = useState(false);
   const [serverError, setServerError] = useState("");
 
   const handleChange = (field) => (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: e.target.value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [field]: "",
-    }));
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    setErrors((prev)   => ({ ...prev, [field]: "" }));
   };
 
   const validate = () => {
     const newErrors = {};
     if (!formData.firstName.trim()) newErrors.firstName = "هذا الحقل مطلوب";
-    if (!formData.lastName.trim()) newErrors.lastName = "هذا الحقل مطلوب";
-    if (!formData.birthDay) newErrors.birthDay = "هذا الحقل مطلوب";
-    if (!formData.birthMonth) newErrors.birthMonth = "هذا الحقل مطلوب";
-    if (!formData.birthYear) newErrors.birthYear = "هذا الحقل مطلوب";
-    if (!formData.gender) newErrors.gender = "هذا الحقل مطلوب";
+    if (!formData.lastName.trim())  newErrors.lastName  = "هذا الحقل مطلوب";
+    if (!formData.birthDay)         newErrors.birthDay  = "هذا الحقل مطلوب";
+    if (!formData.birthMonth)       newErrors.birthMonth = "هذا الحقل مطلوب";
+    if (!formData.birthYear)        newErrors.birthYear  = "هذا الحقل مطلوب";
+    if (!formData.gender)           newErrors.gender     = "هذا الحقل مطلوب";
+
     if (!formData.nationalId.trim()) {
       newErrors.nationalId = "هذا الحقل مطلوب";
     } else if (!/^\d{9}$/.test(formData.nationalId)) {
       newErrors.nationalId = "يجب أن يتكون رقم الهوية من 9 أرقام";
     }
-    
-    // Use validation functions
+
     const emailError = isValidEmailOrPhone(formData.emailOrPhone);
     if (emailError) newErrors.emailOrPhone = emailError;
-    
+
     const passError = isValidPassword(formData.password);
     if (passError) newErrors.password = passError;
 
@@ -72,16 +67,19 @@ const ParentSignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
     setLoading(true);
     setServerError("");
+
     try {
-      await registerUser({ ...formData, role: "parent" });
-      navigate("/login");
+      const response = await registerUser({ ...formData, role: "parent" });
+      login(response.user);          // ← احفظي المستخدم في Context
+      navigate("/parent/dashboard"); // ← روحي مباشرة للـ Dashboard
     } catch (error) {
       if (error.message === "EMAIL_ALREADY_EXISTS") {
         setErrors((prev) => ({
           ...prev,
-          emailOrPhone: "البريد الإلكتروني أو رقم الهاتف مسجل بالفعل",
+          emailOrPhone: "البريد الإلكتروني مسجل بالفعل",
         }));
       } else {
         setServerError(error.message || "حدث خطأ أثناء التسجيل");
@@ -94,22 +92,64 @@ const ParentSignupPage = () => {
   return (
     <div className="parent-signup-page">
       <AuthLayout>
-        <AuthCard title="انشىء حسابك وابدأ رحلتك لمعرفة صحة طفلك النفسية" showBack fallbackPath="/">
+        <AuthCard
+          title="انشىء حسابك وابدأ رحلتك لمعرفة صحة طفلك النفسية"
+          showBack
+          fallbackPath="/"
+        >
           <form onSubmit={handleSubmit} className="parent-signup-form" noValidate>
+
             <div className="section-title">الاسم</div>
             <FormRow columns={2}>
-              <TextInput placeholder="الاسم الأول" value={formData.firstName} onChange={handleChange("firstName")} error={errors.firstName} showIcon={false} />
-              <TextInput placeholder="اسم العائلة" value={formData.lastName} onChange={handleChange("lastName")} error={errors.lastName} showIcon={false} />
+              <TextInput
+                placeholder="الاسم الأول"
+                value={formData.firstName}
+                onChange={handleChange("firstName")}
+                error={errors.firstName}
+                showIcon={false}
+              />
+              <TextInput
+                placeholder="اسم العائلة"
+                value={formData.lastName}
+                onChange={handleChange("lastName")}
+                error={errors.lastName}
+                showIcon={false}
+              />
             </FormRow>
 
             <div className="section-title">تاريخ الميلاد</div>
             <FormRow columns={3}>
-              <SelectInput options={dayOptions} placeholder="اليوم" value={formData.birthDay} onChange={handleChange("birthDay")} error={errors.birthDay} />
-              <SelectInput options={monthOptions} placeholder="الشهر" value={formData.birthMonth} onChange={handleChange("birthMonth")} error={errors.birthMonth} />
-              <SelectInput options={yearOptions} placeholder="السنة" value={formData.birthYear} onChange={handleChange("birthYear")} error={errors.birthYear} />
+              <SelectInput
+                options={dayOptions}
+                placeholder="اليوم"
+                value={formData.birthDay}
+                onChange={handleChange("birthDay")}
+                error={errors.birthDay}
+              />
+              <SelectInput
+                options={monthOptions}
+                placeholder="الشهر"
+                value={formData.birthMonth}
+                onChange={handleChange("birthMonth")}
+                error={errors.birthMonth}
+              />
+              <SelectInput
+                options={yearOptions}
+                placeholder="السنة"
+                value={formData.birthYear}
+                onChange={handleChange("birthYear")}
+                error={errors.birthYear}
+              />
             </FormRow>
 
-            <SelectInput label="الجنس" options={genderOptions} placeholder="تحديد الجنس" value={formData.gender} onChange={handleChange("gender")} error={errors.gender} />
+            <SelectInput
+              label="الجنس"
+              options={genderOptions}
+              placeholder="تحديد الجنس"
+              value={formData.gender}
+              onChange={handleChange("gender")}
+              error={errors.gender}
+            />
 
             <TextInput
               label="رقم الهوية"
@@ -140,14 +180,21 @@ const ParentSignupPage = () => {
               showStrengthMeter={true}
             />
 
-            {serverError && <p className="server-error" style={{ color: "var(--error-color, #ef4444)", textAlign: "center", marginTop: "1rem" }}>{serverError}</p>}
+            {serverError && (
+              <p style={{ color: "#ef4444", textAlign: "center", marginTop: "1rem" }}>
+                {serverError}
+              </p>
+            )}
 
             <div className="buttons-group">
-              <PrimaryButton type="submit" loading={loading}>إرسال</PrimaryButton>
+              <PrimaryButton type="submit" loading={loading}>
+                إرسال
+              </PrimaryButton>
               <SecondaryButton type="button" onClick={() => navigate("/login")}>
                 لدي حساب بالفعل
               </SecondaryButton>
             </div>
+
           </form>
         </AuthCard>
       </AuthLayout>

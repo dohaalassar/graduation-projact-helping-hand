@@ -1,5 +1,3 @@
-
-
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Mail } from "lucide-react";
@@ -12,6 +10,7 @@ import SecondaryButton from "../components/auth/SecondaryButton";
 import RoleSelectionModal from "../components/modal/RoleSelectionModal";
 import { useFormState } from "../hooks/useFormState";
 import { loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext"; // ← جديد
 
 const initialValues = {
   emailOrPhone: "",
@@ -20,6 +19,7 @@ const initialValues = {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth(); // ← جديد
 
   const {
     values,
@@ -34,33 +34,19 @@ const LoginPage = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  // حذف رسالة الخطأ للحقل الذي يتم الكتابة فيه فقط
   const handleChange = (e) => {
     originalHandleChange(e);
-
-    setErrors((prev) => ({
-      ...prev,
-      [e.target.name]: "",
-    }));
-
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
     setServerError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setServerError("");
 
     const newErrors = {};
-
-    // التحقق من الحقول الفارغة
-    if (!values.emailOrPhone.trim()) {
-      newErrors.emailOrPhone = "هذا الحقل مطلوب";
-    }
-
-    if (!values.password.trim()) {
-      newErrors.password = "هذا الحقل مطلوب";
-    }
+    if (!values.emailOrPhone.trim()) newErrors.emailOrPhone = "هذا الحقل مطلوب";
+    if (!values.password.trim())     newErrors.password = "هذا الحقل مطلوب";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -71,6 +57,7 @@ const LoginPage = () => {
 
     try {
       const response = await loginUser(values);
+      login(response.user); // ← احفظي المستخدم في Context
 
       if (response.role === "parent") {
         navigate("/parent/dashboard");
@@ -79,21 +66,14 @@ const LoginPage = () => {
       }
 
     } catch (error) {
-
-      // اسم المستخدم أو كلمة المرور خطأ
       if (
         error.message === "EMAIL_NOT_FOUND" ||
         error.message === "INCORRECT_PASSWORD"
       ) {
-        setServerError(
-          "اسم المستخدم أو كلمة المرور خاطئة"
-        );
+        setServerError("اسم المستخدم أو كلمة المرور خاطئة");
       } else {
-        setServerError(
-          error.message || "حدث خطأ أثناء تسجيل الدخول"
-        );
+        setServerError(error.message || "حدث خطأ أثناء تسجيل الدخول");
       }
-
     } finally {
       setLoading(false);
     }
@@ -130,8 +110,8 @@ const LoginPage = () => {
             />
 
             <div className="forgot-password">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn-link"
                 onClick={() => navigate("/forgot-password")}
               >
@@ -140,17 +120,11 @@ const LoginPage = () => {
             </div>
 
             {serverError && (
-              <p className="auth-server-error">
-                {serverError}
-              </p>
+              <p className="auth-server-error">{serverError}</p>
             )}
 
             <div className="login-buttons">
-
-              <PrimaryButton
-                type="submit"
-                loading={loading}
-              >
+              <PrimaryButton type="submit" loading={loading}>
                 تسجيل الدخول
               </PrimaryButton>
 
@@ -160,7 +134,6 @@ const LoginPage = () => {
               >
                 ليس لدي حساب
               </SecondaryButton>
-
             </div>
 
           </form>
