@@ -17,6 +17,8 @@ import GamePlayPage from "./pages/GamePlayPage";
 import Game2IntroPage from "./pages/Game2IntroPage";
 import Game2PlayPage from "./pages/Game2PlayPage";
 import Game3IntroPage from "./pages/Game3IntroPage";
+import Game4IntroPage from "./pages/Game4IntroPage";
+import Game4PlayPage from "./pages/Game4PlayPage";
 
 function App() {
   return (
@@ -78,6 +80,16 @@ function App() {
         <Route path="/game3/intro/:childId" element={
           <ProtectedRoute allowedRoles={['parent']}>
             <Game3IntroPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/game4/intro/:childId" element={
+          <ProtectedRoute allowedRoles={['parent']}>
+            <Game4IntroPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/game4/play/:childId" element={
+          <ProtectedRoute allowedRoles={['parent']}>
+            <Game4PlayPage />
           </ProtectedRoute>
         } />
 
