@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Scenario = require('../models/Scenario.model'); // استيراد الموديل
+const Scenario = require('../models/Scenario.model'); // استيراد الموديل الخاص بالسيناريوهات والألعاب
 const connectDB = require('../config/db'); 
 require('dotenv').config(); // لتشغيل متغيرات البيئة مثل MONGO_URI
 
@@ -186,7 +186,7 @@ const gameOneScenarios = [
     imageTag: 'new_group',
     questionText: 'طلب منك أحد أن تشارك أطفالاً لا تعرفهم في لعبة جديدة، ماذا تفعل؟',
     options: [
-      { text: 'أرفض بشدة وأتمسك بوالدي أو أجلس وحدي خائفاً', points: 2 },
+      { text: 'أrefuse بشدة وأتمسك بوالدي أو أجلس وحدي خائفاً', points: 2 },
       { text: 'أتردد قليلاً ثم أحاول المشاركة', points: 1 },
       { text: 'أذهب وأشاركهم اللعب بكل ثقة', points: 0 }
     ]
@@ -370,6 +370,7 @@ const gameTwoScenarios = [
   }
 ];
 
+// اللعبة الثالثة: إعدادات المراحل الحركية التفاعلية
 const gameThreeConfig = {
   gameNumber: 3,
   gameName: 'سباق التركيز', 
@@ -381,49 +382,49 @@ const gameThreeConfig = {
       description: 'A large button (or traffic light) changes color every 2-3 seconds between Green and Red. The child must tap only when it turns Red (Stop).', 
       scoring: {
         tapOnGreen: 2,      
-        correctTapOnRed: 0   // استجابة صحيحة 
+        correctTapOnRed: 0   
       }
     },
     {
       stageId: 'spot_the_difference',
       description: 'Two nearly identical images (5 differences) with a 30-second timer. The child must find all differences.', 
       scoring: {
-        found_1_to_2: 2,     // تركيز منخفض جداً
-        found_3_to_4: 1,     // تركيز متوسط 
-        found_5: 0           // تركيز ممتاز 
+        found_1_to_2: 2,     
+        found_3_to_4: 1,     
+        found_5: 0           
       }
     },
     {
       stageId: 'quiet_tap',
       description: 'A simple screen with a 30-second countdown. The instruction is: "Do not touch the screen at all."', 
       scoring: {
-        fivePlusTaps: 2,     // نشاط حركي زائد مرتفع 
-        oneToFourTaps: 1,    // تململ حركي بسيط 
-        zeroTaps: 0          // ثبات وهدوء تام 
+        fivePlusTaps: 2,     
+        oneToFourTaps: 1,    
+        zeroTaps: 0          
       }
     },
     {
       stageId: 'tower_completion',
       description: 'Interface shows 4 empty slots for a tower. Tapping fills one slot. A "Quit/Skip" button is always visible.', 
       scoring: {
-        skipBeforeStep4: 2,  // انسحاب مبكر وعدم إكمال المهمة 
-        stopAtStep3: 1,      // انسحاب في اللحظات الأخيرة 
-        fullCompletion: 0    // إكمال المهمة للنهاية 
+        skipBeforeStep4: 2,  
+        stopAtStep3: 1,      
+        fullCompletion: 0    
       }
     },
     {
       stageId: 'sailing_ship',
       description: 'A ship moves on screen. The child must use a Long Press to keep it on course.', 
       scoring: {
-        liftFingerThreePlusTimes: 2, // عدم القدرة على استدامة النشاط 
-        oneStopOrMinorJitter: 1,     // اضطراب بسيط في الانتباه 
-        steadyContinuousPress: 0     // استمرارية ممتازة وثبات 
+        liftFingerThreePlusTimes: 2, 
+        oneStopOrMinorJitter: 1,     
+        steadyContinuousPress: 0     
       }
     }
   ]
 };
+
 const gameFourScenarios = [
-  // ===== Item 1, 4, 9, 17, 25: السلوك الاجتماعي الإيجابي (لعبة الصديق الوحيد) =====
   {
     id: '4.1',
     gameNumber: 4,
@@ -515,24 +516,32 @@ const gameFourScenarios = [
     ]
   }
 ];
-// دالة التشغيل (Seed function)
-const seedGameOne = async () => {
+
+
+const seedDatabase = async () => {
   try {
     // 1. الاتصال بقاعدة البيانات
     await connectDB();
 
-    // 2. مسح البيانات القديمة للعبة 1 لتجنب التكرار
-    await Scenario.deleteMany({ gameNumber: 1 });
+    console.log('⏳ جاري تنظيف قاعدة البيانات القديمة...');
+    await Scenario.deleteMany({ gameNumber: { $in: [1, 2, 3, 4] } });
 
-    // 3. إدخال البيانات الجديدة
+    // 3. إدخال بيانات الألعاب المبنية على الأسئلة (1, 2, 4)
+    console.log('⏳ جاري إدخال سيناريوهات الألعاب (1، 2، 4)...');
     await Scenario.insertMany(gameOneScenarios);
+    await Scenario.insertMany(gameTwoScenarios);
+    await Scenario.insertMany(gameFourScenarios);
 
-    console.log('✅ تم تشغيل اللعبة الأولى بنجاح!');
-    process.exit(); // إنهاء العملية بعد النجاح
+    
+    console.log('⏳ جاري إدخال هيكل اللعبة الثالثة التفاعلية...');
+    await Scenario.create(gameThreeConfig);
+
+    console.log('✅ تم تشغيل وتغذية جميع الألعاب (1، 2، 3، 4) في قاعدة البيانات بنجاح تام!');
+    process.exit(0); // إنهاء العملية بنجاح
   } catch (err) {
-    console.error('❌ فشل في تعبئة البيانات:', err);
-    process.exit(1);
+    console.error('❌ فشل في تعبئة قاعدة البيانات بالبيانات:', err);
+    process.exit(1); // إيقاف التطبيق بسبب الخطأ
   }
 };
 
-seedGameOne();
+seedDatabase();
