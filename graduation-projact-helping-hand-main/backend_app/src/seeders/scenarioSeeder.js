@@ -372,37 +372,52 @@ const gameTwoScenarios = [
 
 const gameThreeConfig = {
   gameNumber: 3,
-  gameName: 'تحدي التركيز',
-  domain: 'hyperactivity',
+  gameName: 'سباق التركيز', 
+  domain: 'hyperactivity', 
 
   stages: [
     {
-      stageId: 'go_no_go',
-      description: 'اضغط فقط عندما ترى اللون الأخضر',
-      trials: 10,
+      stageId: 'movement_freeze',
+      description: 'A large button (or traffic light) changes color every 2-3 seconds between Green and Red. The child must tap only when it turns Red (Stop).', 
       scoring: {
-        correctClick: 0,
-        missedGreen: 2,
-        clickedRed: 2
+        tapOnGreen: 2,      
+        correctTapOnRed: 0   // استجابة صحيحة 
       }
     },
     {
-      stageId: 'memory_sequence',
-      description: 'تذكر الترتيب وأعده',
-      sequenceLength: 3,
+      stageId: 'spot_the_difference',
+      description: 'Two nearly identical images (5 differences) with a 30-second timer. The child must find all differences.', 
       scoring: {
-        correct: 0,
-        partial: 1,
-        wrong: 2
+        found_1_to_2: 2,     // تركيز منخفض جداً
+        found_3_to_4: 1,     // تركيز متوسط 
+        found_5: 0           // تركيز ممتاز 
       }
     },
     {
-      stageId: 'rule_switch',
-      description: 'اتبع القاعدة الجديدة',
-      rules: ['circle', 'square'],
+      stageId: 'quiet_tap',
+      description: 'A simple screen with a 30-second countdown. The instruction is: "Do not touch the screen at all."', 
       scoring: {
-        correct: 0,
-        wrong: 2
+        fivePlusTaps: 2,     // نشاط حركي زائد مرتفع 
+        oneToFourTaps: 1,    // تململ حركي بسيط 
+        zeroTaps: 0          // ثبات وهدوء تام 
+      }
+    },
+    {
+      stageId: 'tower_completion',
+      description: 'Interface shows 4 empty slots for a tower. Tapping fills one slot. A "Quit/Skip" button is always visible.', 
+      scoring: {
+        skipBeforeStep4: 2,  // انسحاب مبكر وعدم إكمال المهمة 
+        stopAtStep3: 1,      // انسحاب في اللحظات الأخيرة 
+        fullCompletion: 0    // إكمال المهمة للنهاية 
+      }
+    },
+    {
+      stageId: 'sailing_ship',
+      description: 'A ship moves on screen. The child must use a Long Press to keep it on course.', 
+      scoring: {
+        liftFingerThreePlusTimes: 2, // عدم القدرة على استدامة النشاط 
+        oneStopOrMinorJitter: 1,     // اضطراب بسيط في الانتباه 
+        steadyContinuousPress: 0     // استمرارية ممتازة وثبات 
       }
     }
   ]
