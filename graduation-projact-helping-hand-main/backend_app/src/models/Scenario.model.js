@@ -7,51 +7,53 @@ const scenarioSchema = new mongoose.Schema({
     enum: [1, 2, 3, 4, 5],
     required: true
   },
-  // اسم اللعبة باللغة العربية أو الإنجليزية
+  
   gameName: {
     type: String,
     required: true
   },
-  // المجال النفسي الذي تقيسه اللعبة
+  
   domain: {
     type: String,
     enum: ['emotional', 'conduct', 'hyperactivity', 'peer', 'prosocial'],
     required: true
   },
-  // رقم البند في مقياس SDQ (ضروري جداً للعشوائية)
-  // مثلاً: البنود 3، 8، 13، 16، 24 للعبة الأولى
+  
+
   sdqItem: {
-    type: Number,
-    required: true
+    type: Number
   },
-  // معرف فريد لكل سيناريو (مثلاً: "3.a", "3.b")
   scenarioId: {
     type: String, 
-    required: true,
-    unique: true
+    unique: true,
+    // دالة شرطية: الحقل مطلوب فقط إذا كانت اللعبة ليست اللعبة رقم 3
+    required: function() { return this.gameNumber !== 3; }
   },
-  // الكود أو الاسم المرتبط بالصورة التي ستظهر في React
   imageTag: {
-    type: String, 
-    required: true
+    type: String
   },
-  // نص السؤال باللغة العربية (سياق غزة)
   questionText: {
-    type: String, 
-    required: true
+    type: String
   },
-  // خيارات الإجابة (نصوص بدلاً من إيموجي)
   options: [
     {
       text: { type: String, required: true }, 
       points: { type: Number, required: true }, // النقاط (0, 1, 2)
     }
   ],
-  // حقل إضافي للألعاب التي تعتمد على "الأفخاخ" أو التفاعل السريع (مثل اللعبة 3 و 5)
   isTrap: {
     type: Boolean,
     default: false
-  }
-}, { timestamps: true }); // أضفت التوقيت لمتابعة متى تم إدخال البيانات
+  },
+
+  stages: [
+    {
+      stageId: { type: String, required: true },
+      description: { type: String, required: true },
+      scoring: { type: mongoose.Schema.Types.Mixed } 
+    }
+  ]
+
+}, { timestamps: true }); 
 
 module.exports = mongoose.model('Scenario', scenarioSchema);
