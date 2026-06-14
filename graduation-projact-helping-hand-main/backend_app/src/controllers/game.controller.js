@@ -1,83 +1,146 @@
-const Scenario = require('../models/scenario.model');
-const Session = require('../models/session.model'); // افترضنا وجود موديل للجلسة
+const Assessment = require('../models/Assessment.model'); 
+const Scenario = require('../models/Scenario.model');   
 
-exports.submitFocusGameResults = async (req, res) => {
-    try {
-        const { sessionId, rawPerformance } = req.body; 
+// 1. استقبال وحفظ نتيجة لعبة محددة
+exports.submitGameResult = async (req, res) => {
+  try {
+    const { assessmentId, gameNumber } = req.params;
+    const gameNum = Number(gameNumber);
 
-        let hyperactivityScore = 0;
-        const processedResults = [];
+    // [المسار الأول]: معالجة اللعبة رقم 3 (سباق التركيز - التفاعلية الحركية بكودك الخاص)
+    if (gameNum === 3) {
+      const { rawPerformance } = req.body; 
 
-        for (const item of rawPerformance) {
-            const scenario = await Scenario.findOne({ scenarioCode: item.scenarioCode });
-            if (!scenario) continue;
+      if (!rawPerformance || !Array.isArray(rawPerformance)) {
+        return res.status(400).json({ 
+          status: 'fail', 
+          message: 'لم يتم إرسال بيانات الأداء الحركي للعبة الثالثة بشكل صحيح' 
+        });
+      }
 
-            let points = 0;
+      let hyperactivityScore = 0;
+      const processedResults = [];
 
-            switch (scenario.mechanism) {
-                
-                case 'GO_NO_GO': // مثل مهمة Movement Freeze (بند 21)
-                    // الضغط على الأخضر (اندفاع) = 2، التوقف الصحيح عند الأحمر = 0 
-                    points = item.errors > 0 ? 2 : 0;
-                    break;
+      for (const item of rawPerformance) {
+        const scenario = await Scenario.findOne({ scenarioCode: item.scenarioCode });
+        if (!scenario) continue;
 
-                case 'TARGET_TAP': // مثل مهمة Catch the Treasure (بند 10)
-                    // 5 أخطاء فأكثر = 2، من 1-4 أخطاء = 1، لا أخطاء = 0 
-                    if (item.errors >= 5) points = 2;
-                    else if (item.errors >= 1) points = 1;
-                    else points = 0;
-                    break;
+        let points = 0;
 
-                case 'QUIET_TIME': // مثل مهمة Quiet Tap (بند 15)
-                    // 5 نقرات فأكثر (تململ عالي) = 2، من 1-4 = 1، صفر نقرات = 0 
-                    if (item.touches >= 5) points = 2;
-                    else if (item.touches >= 1) points = 1;
-                    else points = 0;
-                    break;
+        switch (scenario.mechanism) {
+          case 'GO_NO_GO': 
+            points = item.errors > 0 ? 2 : 0;
+            break;
 
-                case 'LONG_PRESS': // مثل مهمة The Sailing Ship (بند 2)
-                    // رفع الإصبع 3 مرات فأكثر = 2، مرة واحدة = 1، ضغط مستمر = 0 
-                    if (item.interruptions >= 3) points = 2;
-                    else if (item.interruptions >= 1) points = 1;
-                    else points = 0;
-                    break;
+          case 'TARGET_TAP': 
+            if (item.errors >= 5) points = 2;
+            else if (item.errors >= 1) points = 1;
+            else points = 0;
+            break;
 
-                case 'SEQUENCE_COMPLETION': // مثل مهمة Tower Completion (بند 25)
-                    // التوقف قبل الخطوة الرابعة = 2، التوقف عند الثالثة = 1، الإكمال = 0 
-                    if (item.lastStep < 3) points = 2;
-                    else if (item.lastStep === 3) points = 1;
-                    else points = 0;
-                    break;
+          case 'QUIET_TIME': 
+            if (item.touches >= 5) points = 2;
+            else if (item.touches >= 1) points = 1;
+            else points = 0;
+            break;
 
-                default:
-                    points = 0;
-            }
+          case 'LONG_PRESS': 
+            if (item.interruptions >= 3) points = 2;
+            else if (item.interruptions >= 1) points = 1;
+            else points = 0;
+            break;
 
-            processedResults.push({
-                scenarioCode: item.scenarioCode,
-                sdqItem: scenario.sdqItem,
-                points: points
-            });
+          case 'SEQUENCE_COMPLETION': 
+            if (item.lastStep < 3) points = 2;
+            else if (item.lastStep === 3) points = 1;
+            else points = 0;
+            break;
 
-            hyperactivityScore += points;
+          default:
+            points = 0;
         }
 
-        // تحديث جلسة الطفل بالنقاط الجديدة
-        await Session.findOneAndUpdate(
-            { sessionId: sessionId },
-            { 
-                $set: { "scores.hyperactivity": hyperactivityScore },
-                $push: { "gameLogs": { gameId: 3, details: processedResults } }
-            }
-        );
-
-        res.status(200).json({
-            status: "success",
-            message: "تمت معالجة بيانات التركيز بنجاح",
-            summary: { hyperactivityScore }
+        processedResults.push({
+          scenarioCode: item.scenarioCode,
+          sdqItem: scenario.sdqItem,
+          points: points
         });
 
-    } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
+        hyperactivityScore += points;
+      }
+
+      await Assessment.findByIdAndUpdate(
+        assessmentId,
+        { 
+          $set: { "domainScores.hyperactivity": hyperactivityScore },
+          $push: { "gameLogs": { gameId: 3, details: processedResults } }
+        }
+      );
+
+      return res.status(200).json({
+        status: "success",
+        message: "تمت معالجة بيانات التركيز بنجاح بحسب آليات اللعب المعتمدة",
+        summary: { hyperactivityScore }
+      });
     }
+
+    // [المسار الثاني]: معالجة الألعاب (1, 2, 4, 5) القائمة على الأسئلة والخيارات
+    const { answers } = req.body; 
+    if (!answers || !Array.isArray(answers)) {
+      return res.status(400).json({ 
+        status: 'fail', 
+        message: 'لم يتم إرسال مصفوفة الإجابات الخاصة باللعبة' 
+      });
+    }
+
+    let totalGamePoints = 0;
+    const gameDetailsLogs = [];
+    let targetDomain = '';
+
+    for (const answer of answers) {
+      const scenario = await Scenario.findOne({ scenarioId: answer.scenarioId });
+      if (!scenario) continue;
+
+      // تحديد المجال النفسي بناءً على بيانات السيناريو المستخرج
+      targetDomain = scenario.domain;
+
+      // البحث عن الخيار الذي اختاره الطفل داخل مصفوفة الخيارات لمعرفة نقاطه (0، 1، 2)
+      const selectedOption = scenario.options.find(opt => opt.text === answer.chosenOptionText);
+      const points = selectedOption ? selectedOption.points : 0;
+
+      totalGamePoints += points;
+
+      // توثيق الإجابة في السجل
+      gameDetailsLogs.push({
+        scenarioId: scenario.scenarioId,
+        sdqItem: scenario.sdqItem,
+        chosenAnswer: answer.chosenOptionText,
+        points: points
+      });
+    }
+
+    const updateData = {
+      $push: { "gameLogs": { gameId: gameNum, details: gameDetailsLogs } }
+    };
+    
+    // ربط مجموع النقاط بالمجال النفسي الصحيح ديناميكياً (emotional, conduct, peer, prosocial)
+    if (targetDomain) {
+      updateData.$set = { [`domainScores.${targetDomain}`]: totalGamePoints };
+    }
+
+    // تحديث السجل في قاعدة البيانات
+    await Assessment.findByIdAndUpdate(assessmentId, updateData);
+
+    return res.status(200).json({
+      status: 'success',
+      message: `تم احتساب وحفظ نتائج اللعبة رقم ${gameNum} بنجاح`,
+      summary: {
+        domain: targetDomain,
+        totalScore: totalGamePoints
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
 };
